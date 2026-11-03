@@ -79,8 +79,12 @@ create policy "consultas propias" on public.consultas
       select 1 from public.consultados c where c.id = consultado_id and c.owner = auth.uid()))
   );
 
--- El usuario no puede cambiarse el plan a sí mismo
-revoke update (plan) on public.perfiles from authenticated;
+-- Permisos de la API. El usuario no puede cambiarse el plan a sí mismo.
+grant select, update on public.perfiles to authenticated;
+grant select, insert, update, delete on public.consultados to authenticated;
+grant select, insert, update, delete on public.consultas to authenticated;
+revoke update on public.perfiles from authenticated;
+grant update (nombre, nombre_santo, tipo, orisha_cabecera, casa, padrino, telefono, pais) on public.perfiles to authenticated;
 
 -- 5) Crear el perfil automáticamente al registrarse
 create or replace function public.crear_perfil()
