@@ -136,6 +136,9 @@ details[open] summary::after{content:"－"}
 .tile b{display:block;font-family:var(--display);font-size:30px;line-height:1;font-variant-numeric:tabular-nums}
 .tile span{font-size:12px;color:var(--muted)}
 .tile.alert b{color:var(--gold)}
+.bar{height:10px;border-radius:5px;background:var(--panel2);overflow:hidden}.bar i{display:block;height:100%;background:var(--gold);border-radius:5px}
+.mes{display:grid;grid-template-columns:64px 1fr 32px;gap:8px;align-items:center;font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.mes b{color:var(--cowrie);text-align:right;font-weight:600}
 .empty{color:var(--muted);text-align:center;padding:18px 8px;font-size:14px}
 .sheet{position:fixed;inset:0;background:rgba(6,8,14,.6);display:none;z-index:20}
 .sheet.on{display:block}
@@ -267,6 +270,35 @@ nav.tabs button[aria-current="page"]{color:var(--gold)}
       <div id="omoluos"></div>
     </section>
 
+    <!-- ADMIN -->
+    <section class="view" id="v-admin" aria-label="Administración">
+      <div class="between"><h2>Panel de administrador</h2><button class="btn small ghost" id="adm-refrescar">Actualizar</button></div>
+      <div class="note" id="adm-hora"></div>
+      <div class="tiles">
+        <div class="tile"><b id="a-usuarios">–</b><span>religiosos registrados</span></div>
+        <div class="tile"><b id="a-nuevos">–</b><span>nuevos en 7 días</span></div>
+        <div class="tile"><b id="a-activos">–</b><span>activos en 30 días</span></div>
+      </div>
+      <div class="tiles">
+        <div class="tile"><b id="a-consultas">–</b><span>consultas en total</span></div>
+        <div class="tile"><b id="a-c30">–</b><span>consultas en 30 días</span></div>
+        <div class="tile"><b id="a-pro">–</b><span>en plan Pro</span></div>
+      </div>
+      <div class="card"><h3>Registros por mes</h3><div id="a-meses"></div></div>
+      <div class="card"><h3>Uso por sistema</h3><div id="a-sistema"></div></div>
+      <div class="card"><h3>Por tipo de religioso</h3><div id="a-tipos" class="stack" style="gap:6px"></div></div>
+      <div class="card"><h3>Por país</h3><div id="a-paises" class="stack" style="gap:6px"></div></div>
+      <div class="card stack">
+        <div class="between"><h3 style="margin:0">Religiosos</h3><button class="link" id="adm-csv">Copiar lista</button></div>
+        <div class="search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+          <input type="search" id="adm-q" placeholder="Buscar por nombre, correo, casa o país" aria-label="Buscar religioso">
+        </div>
+        <div class="list" id="a-lista"></div>
+      </div>
+      <div class="note">Por privacidad, aquí solo ves quién usa la app y cuánto. Las consultas y los consultados de cada religioso no son visibles para el administrador.</div>
+    </section>
+
     <!-- PERFIL -->
     <section class="view" id="v-perfil" aria-label="Perfil">
       <div class="between">
@@ -289,6 +321,7 @@ nav.tabs button[aria-current="page"]{color:var(--gold)}
         </div>
         <button class="btn" type="submit">Guardar perfil</button>
       </form>
+      <button class="btn" id="irAdmin" hidden>Panel de administrador</button>
       <div class="card stack">
         <div class="between"><span>Plan</span><span class="pill gold" id="p-plan">Gratis</span></div>
         <div class="row"><button class="btn ghost" id="exportar">Copiar mis datos</button><button class="btn ghost" id="salir">Cerrar sesión</button></div>

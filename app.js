@@ -83,6 +83,10 @@ const Store = {
     if(q.id){ const {id,owner,fecha,...rest}=q; const {data,error}=await sb.from("consultas").update(rest).eq("id",id).select().single(); if(error) throw error; return data; }
     const {data,error}=await sb.from("consultas").insert(q).select().single(); if(error) throw error; return data;
   },
+  async esAdmin(){ if(!CLOUD) return false; const {data,error}=await sb.rpc("soy_admin"); return !error && data===true; },
+  async adminUsuarios(){ const {data,error}=await sb.rpc("admin_usuarios"); if(error) throw error; return data; },
+  async adminResumen(){ const {data,error}=await sb.rpc("admin_resumen"); if(error) throw error; return data; },
+  async adminPlan(id,plan){ const {error}=await sb.rpc("admin_cambiar_plan",{usuario:id,nuevo_plan:plan}); if(error) throw error; },
   async borrarConsulta(id){
     if(!CLOUD){ Demo.set("consultas",Demo.get("consultas",[]).filter(x=>x.id!==id)); return; }
     const {error}=await sb.from("consultas").delete().eq("id",id); if(error) throw error;
@@ -390,15 +394,65 @@ $("#salir").onclick=async()=>{
 };
 $("#equiv").innerHTML=D.map(x=>`<div class="between" style="font-size:14px;border-bottom:1px solid var(--line);padding:6px 0"><span><b>${x.n}</b> ${esc(x.nombre)}</span><span class="note">${esc(mj(x.ifa).nombre)}</span></div>`).join("");
 
+/* ===================== ADMINISTRADOR ===================== */
+const TIPO_TXT={olorisha:"Olorisha",iyalorisha:"Iyalorisha",babalawo:"Babalawo",iyanifa:"Iyanifá",aleyo:"Aleyo",otro:"Otro","sin dato":"Sin dato"};
+const hace=d=>{ if(!d) return "nunca"; const s=(Date.now()-new Date(d))/1000; if(s<3600) return "hace "+Math.max(1,Math.round(s/60))+" min"; if(s<86400) return "hace "+Math.round(s/3600)+" h"; if(s<86400*30) return "hace "+Math.round(s/86400)+" días"; return fmtFecha(d); };
+function barras(el,obj,mapa){ const e=Object.entries(obj||{}).sort((a,b)=>b[1]-a[1]); const max=Math.max(1,...e.map(x=>x[1]));
+  el.innerHTML=e.length?e.map(([k,n])=>`<div class="mes" style="grid-template-columns:120px 1fr 32px"><span style="color:var(--cowrie);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(mapa?(mapa[k]||k):k)}</span><span class="bar"><i style="width:${Math.round(n/max*100)}%"></i></span><b>${n}</b></div>`).join(""):`<div class="note">Sin datos.</div>`; }
+async function cargarAdmin(){
+  $("#adm-hora").textContent="Cargando…";
+  try{
+    const [r,u]=await Promise.all([Store.adminResumen(),Store.adminUsuarios()]);
+    S.adminUsers=u;
+    $("#a-usuarios").textContent=r.usuarios; $("#a-nuevos").textContent=r.nuevos_7d; $("#a-activos").textContent=r.activos_30d;
+    $("#a-consultas").textContent=r.consultas; $("#a-c30").textContent=r.consultas_30d; $("#a-pro").textContent=r.pro;
+    const meses=r.registros_por_mes||[]; const mx=Math.max(1,...meses.map(m=>m.n));
+    $("#a-meses").innerHTML=meses.length?`<div class="stack" style="gap:6px">${meses.map(m=>`<div class="mes"><span>${new Date(m.mes+"-15").toLocaleDateString("es",{month:"short",year:"numeric"})}</span><span class="bar"><i style="width:${Math.round(m.n/mx*100)}%"></i></span><b>${m.n}</b></div>`).join("")}</div>`:`<div class="note">Todavía no hay registros.</div>`;
+    const tot=Math.max(1,r.dilo+r.ifa);
+    $("#a-sistema").innerHTML=`<div class="stack" style="gap:6px"><div class="mes" style="grid-template-columns:70px 1fr 40px"><span style="color:var(--cowrie)">Diloggún</span><span class="bar"><i style="width:${Math.round(r.dilo/tot*100)}%"></i></span><b>${r.dilo}</b></div><div class="mes" style="grid-template-columns:70px 1fr 40px"><span style="color:var(--cowrie)">Ifá</span><span class="bar"><i style="width:${Math.round(r.ifa/tot*100)}%;background:var(--bead)"></i></span><b>${r.ifa}</b></div></div>`;
+    barras($("#a-tipos"),r.por_tipo,TIPO_TXT); barras($("#a-paises"),r.por_pais);
+    pintarAdminLista();
+    $("#adm-hora").textContent="Actualizado "+new Date().toLocaleTimeString("es",{hour:"2-digit",minute:"2-digit"});
+  }catch(e){ $("#adm-hora").innerHTML=`<span class="err" style="display:block">No se pudo cargar el panel: ${esc(e.message||e)}</span>`; }
+}
+function pintarAdminLista(){
+  const q=norm($("#adm-q").value.trim()); const l=(S.adminUsers||[]).filter(u=>!q||norm([u.nombre,u.nombre_santo,u.email,u.casa,u.pais].join(" ")).includes(q));
+  $("#a-lista").innerHTML=l.length?l.map(u=>`<button class="item" data-au="${u.id}"><span class="sw" style="background:${u.consultas_30d>0?"var(--ire)":(u.consultas>0?"var(--gold)":"var(--line)")}"></span><span class="n">${esc(((u.nombre_santo||u.nombre||u.email||"?").trim()[0]||"?").toUpperCase())}</span><span class="x"><b>${esc(u.nombre_santo||u.nombre||u.email)}</b><span>${esc([TIPO_TXT[u.tipo]||"",u.casa,u.pais].filter(Boolean).join(" · ")||u.email)}</span><span>${u.consultas} consultas · ${u.consultados} consultados${u.confirmado?"":" · sin confirmar correo"}</span></span><span class="r">${u.plan==="pro"?'<span class="pill gold">Pro</span><br>':""}${hace(u.ultimo_acceso)}</span></button>`).join(""):`<div class="empty">${(S.adminUsers||[]).length?"Nadie coincide con la búsqueda.":"Todavía no hay religiosos registrados."}</div>`;
+}
+$("#adm-q").oninput=pintarAdminLista;
+$("#adm-refrescar").onclick=cargarAdmin;
+$("#irAdmin").onclick=()=>go("admin");
+$("#adm-csv").onclick=async()=>{ const rows=[["nombre","nombre_santo","correo","tipo","casa","pais","telefono","plan","registrado","ultimo_acceso","consultados","consultas","consultas_30d"]].concat((S.adminUsers||[]).map(u=>[u.nombre,u.nombre_santo,u.email,u.tipo,u.casa,u.pais,u.telefono,u.plan,u.registrado,u.ultimo_acceso,u.consultados,u.consultas,u.consultas_30d]));
+  const t=rows.map(r=>r.map(v=>{ v=String(v??""); return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v; }).join(",")).join("\n");
+  try{ await navigator.clipboard.writeText(t); toast("Lista copiada. Pégala en Excel o Google Sheets."); }catch(e){ toast("No se pudo copiar en este navegador"); } };
+document.addEventListener("click",e=>{ const b=e.target.closest("[data-au]"); if(!b) return; const u=(S.adminUsers||[]).find(x=>x.id===b.dataset.au); if(!u) return;
+  openSheet(`<div class="hero"><div class="badge">${esc(((u.nombre_santo||u.nombre||u.email||"?").trim()[0]||"?").toUpperCase())}</div><div><div class="nm">${esc(u.nombre_santo||u.nombre||"Sin nombre")}</div><div class="meta">${esc(u.email)}</div><span class="pill ${u.plan==="pro"?"gold":"ire"}" style="margin-top:6px">Plan ${u.plan==="pro"?"Pro":"Gratis"}</span></div></div>
+   <div class="card" style="margin-top:12px"><h3>Datos</h3><ul class="l" style="list-style:none;padding:0">
+     ${u.nombre?`<li><b>Nombre:</b> ${esc(u.nombre)}</li>`:""}
+     <li><b>Tipo:</b> ${esc(TIPO_TXT[u.tipo]||"Sin dato")}${u.orisha_cabecera?" · "+esc(u.orisha_cabecera):""}</li>
+     ${u.casa?`<li><b>Casa:</b> ${esc(u.casa)}</li>`:""}
+     ${u.pais?`<li><b>País:</b> ${esc(u.pais)}</li>`:""}
+     ${u.telefono?`<li><b>Teléfono:</b> ${esc(u.telefono)}</li>`:""}
+     <li><b>Registrado:</b> ${fmtFecha(u.registrado)}${u.confirmado?"":" (correo sin confirmar)"}</li>
+     <li><b>Último acceso:</b> ${hace(u.ultimo_acceso)}</li>
+   </ul></div>
+   <div class="tiles" style="margin-top:12px"><div class="tile"><b>${u.consultados}</b><span>consultados</span></div><div class="tile"><b>${u.consultas}</b><span>consultas</span></div><div class="tile"><b>${u.consultas_30d}</b><span>en 30 días</span></div></div>
+   <div class="note" style="margin-top:8px">Última consulta: ${u.ultima_consulta?hace(u.ultima_consulta):"ninguna"}</div>
+   <button class="btn" id="cambiarPlan" style="margin-top:12px">${u.plan==="pro"?"Pasar a plan Gratis":"Pasar a plan Pro"}</button>`);
+  $("#cambiarPlan").onclick=async()=>{ try{ await Store.adminPlan(u.id,u.plan==="pro"?"gratis":"pro"); toast("Plan actualizado"); closeSheet(); await cargarAdmin(); }catch(err){ toast("No se pudo cambiar el plan: "+(err.message||err)); } };
+});
+
 /* ===================== NAVEGACIÓN Y HOJAS ===================== */
 function openSheet(h){$("#sheetBody").innerHTML=h;$("#sheet").classList.add("on");$("#sheet .body").scrollTop=0;}
 function closeSheet(){$("#sheet").classList.remove("on");}
 $("#closeSheet").onclick=closeSheet; $("#sheet").onclick=e=>{if(e.target.id==="sheet")closeSheet();};
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet();});
-const VIEWS=["inicio","consulta","gente","signos","perfil"];
+const VIEWS=["inicio","consulta","gente","signos","perfil","admin"];
 function go(v){ if(!VIEWS.includes(v)) v="inicio"; S.view=v;
   VIEWS.forEach(x=>$("#v-"+x).classList.toggle("on",x===v));
-  document.querySelectorAll("nav.tabs button").forEach(t=>{ if(t.dataset.v===v) t.setAttribute("aria-current","page"); else t.removeAttribute("aria-current"); });
+  if(v==="admin"){ if(!S.admin){ v="perfil"; S.view=v; VIEWS.forEach(x=>$("#v-"+x).classList.toggle("on",x===v)); } else cargarAdmin(); }
+  const tabV = v==="admin" ? "perfil" : v;
+  document.querySelectorAll("nav.tabs button").forEach(t=>{ if(t.dataset.v===tabV) t.setAttribute("aria-current","page"); else t.removeAttribute("aria-current"); });
   if(location.hash.slice(1)!==v) history.replaceState(null,"","#"+v);
   window.scrollTo(0,0); }
 document.querySelector("nav.tabs").onclick=e=>{const t=e.target.closest("button"); if(t) go(t.dataset.v);};
@@ -442,6 +496,7 @@ $("#a-forgot").onclick=async()=>{ const email=$("#a-email").value.trim(); if(!em
   try{ await Store.reset(email); $("#a-msg").innerHTML=`<div class="warn">Te enviamos un enlace a <b>${esc(email)}</b> para crear una contraseña nueva.</div>`; }catch(e){ $("#a-msg").innerHTML=`<div class="err">${esc(authErr(e))}</div>`; } };
 function mostrarAuth(){ $("#auth").hidden=false; $("#app").hidden=true; $("#tabs").hidden=true; closeSheet(); }
 async function entrar(){ $("#auth").hidden=true; $("#app").hidden=false; $("#tabs").hidden=false; $("#demoBadge").hidden=CLOUD;
+  S.admin=await Store.esAdmin(); $("#irAdmin").hidden=!S.admin;
   await recargar(); go(location.hash.slice(1)||"inicio"); }
 
 /* Recuperación de contraseña: Supabase devuelve al usuario con una sesión de tipo "recovery" */
