@@ -1,9 +1,9 @@
 {
-  "name": "Odu Yoruba · Diloggún e Ifá",
+  "name": "Odu Yoruba · Consultas de Diloggún e Ifá",
   "short_name": "Odu Yoruba",
-  "description": "Signos del Diloggún e Ifá: refranes, Orishas, ebbó, patakí y consejos según la consulta.",
+  "description": "Lleva las consultas de Diloggún e Ifá de tus ahijados: signos, refranes, Orishas, ebbó y patakí.",
   "lang": "es",
-  "start_url": "./",
+  "start_url": "./#inicio",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
@@ -12,6 +12,6 @@
   "icons": [
     {"src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png"},
     {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png"},
-    {"src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+    {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
   ]
 }

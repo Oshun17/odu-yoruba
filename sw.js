@@ -1,19 +1,18 @@
-// Odu Yoruba: funciona sin internet
-const CACHE = "odu-v1";
-const CORE = ["./", "./index.html", "./manifest.webmanifest", "./icons/icon-192.png", "./icons/icon-512.png", "./icons/icon-180.png"];
+// Odu Yoruba · funciona sin internet. Archivos propios: red primero (para recibir actualizaciones), caché si no hay conexión.
+const CACHE = "odu-saas-v1";
+const CORE = ["./", "./index.html", "./app.js", "./data.js", "./config.js", "./vendor/supabase.js", "./manifest.webmanifest", "./icons/icon-192.png", "./icons/icon-512.png", "./icons/icon-180.png"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting())); });
 self.addEventListener("activate", e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener("fetch", e => {
-  if (e.request.method !== "GET") return;
-  const url = new URL(e.request.url);
-  // Página: red primero (para recibir actualizaciones), caché si no hay internet
-  if (e.request.mode === "navigate") {
-    e.respondWith(fetch(e.request).then(r => { const c = r.clone(); caches.open(CACHE).then(x => x.put("./index.html", c)); return r; }).catch(() => caches.match("./index.html")));
+  const req = e.request; if (req.method !== "GET") return;
+  const url = new URL(req.url);
+  if (url.origin === location.origin) {
+    e.respondWith(fetch(req).then(r => { if (r.ok) { const c = r.clone(); caches.open(CACHE).then(x => x.put(req, c)); } return r; })
+      .catch(() => caches.match(req, { ignoreSearch: true }).then(hit => hit || (req.mode === "navigate" ? caches.match("./index.html") : undefined))));
     return;
   }
-  // Resto (íconos, tipografías): caché primero
-  e.respondWith(caches.match(e.request).then(hit => hit || fetch(e.request).then(r => {
-    if (r.ok && (url.origin === location.origin || url.host.includes("fonts.g"))) { const c = r.clone(); caches.open(CACHE).then(x => x.put(e.request, c)); }
-    return r;
-  })));
+  if (url.host.includes("fonts.googleapis.com") || url.host.includes("fonts.gstatic.com")) {
+    e.respondWith(caches.match(req).then(hit => hit || fetch(req).then(r => { const c = r.clone(); caches.open(CACHE).then(x => x.put(req, c)); return r; })));
+  }
+  // Supabase y demás: directo a la red (no se guarda en caché)
 });

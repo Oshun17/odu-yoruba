@@ -3,23 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Odu Yoruba · Diloggún e Ifá</title>
+<title>Odu Yoruba · Consultas de Diloggún e Ifá</title>
+<meta name="description" content="Lleva las consultas de Diloggún e Ifá de tus ahijados: signos, refranes, Orishas, ebbó y patakí.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#121726">
-<meta name="description" content="Signos del Diloggún e Ifá: refranes, Orishas, ebbó, patakí y consejos según la consulta.">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Odu Yoruba">
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* Plan: la estera de noche. Fondo índigo profundo, marfil de caracol, rojo de eleke, oro de Oshún.
-   Layout: app de una columna (máx. 480px) con barra inferior de 4 pestañas y hojas de detalle. */
+/* La estera de noche: índigo profundo, marfil de caracol, rojo de eleke, oro de Oshún.
+   Una columna (máx. 520px), barra inferior de 5 pestañas, hojas inferiores para fichas y formularios. */
 :root{
   --ink:#121726; --panel:#1b2236; --panel2:#232c45; --line:#2f3a58;
   --cowrie:#efe6d2; --muted:#a8a28f; --bead:#d9573b; --gold:#cfa448;
@@ -34,24 +33,42 @@ body{background:var(--ink);color:var(--cowrie);font-family:var(--body);font-size
 button,input,textarea,select{font:inherit;color:inherit}
 button{cursor:pointer}
 :focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-.app{max-width:480px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;padding:env(safe-area-inset-top) 0 calc(76px + env(safe-area-inset-bottom))}
-header.top{padding:18px 18px 10px;display:flex;align-items:center;gap:12px}
-header.top h1{font-family:var(--display);font-weight:700;font-size:28px;margin:0;letter-spacing:.3px}
-header.top .sub{font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
-.logo{width:38px;height:38px;flex:none}
+[hidden]{display:none!important}
+.app{max-width:520px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;padding:env(safe-area-inset-top) 0 calc(80px + env(safe-area-inset-bottom))}
+header.top{padding:16px 18px 8px;display:flex;align-items:center;gap:12px}
+header.top h1{font-family:var(--display);font-weight:700;font-size:26px;margin:0;line-height:1}
+header.top .sub{font-size:11.5px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+header.top .sp{flex:1}
+.logo{width:36px;height:36px;flex:none}
+.demo{font-size:11.5px;color:var(--gold);border:1px solid var(--gold);border-radius:999px;padding:3px 9px}
 main{flex:1;padding:0 16px 16px}
 .view{display:none;flex-direction:column;gap:14px}
 .view.on{display:flex}
-h2{font-family:var(--display);font-size:24px;font-weight:700;margin:6px 0 0;text-wrap:balance}
+h2{font-family:var(--display);font-size:25px;font-weight:700;margin:6px 0 0;text-wrap:balance;line-height:1.15}
 h3{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin:0 0 8px;font-weight:700}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+.stack{display:flex;flex-direction:column;gap:12px}
+.row{display:flex;gap:8px}
+.row>*{flex:1}
+.between{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .seg{display:grid;grid-template-columns:1fr 1fr;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:4px;gap:4px}
 .seg button{border:0;background:transparent;padding:10px;border-radius:9px;font-weight:600;color:var(--muted)}
 .seg button[aria-pressed="true"]{background:var(--panel2);color:var(--cowrie);box-shadow:inset 0 0 0 1px var(--line)}
-.label{font-size:13px;color:var(--muted);margin-bottom:8px;display:flex;justify-content:space-between;align-items:baseline}
+.label{font-size:13px;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
 .label b{color:var(--cowrie);font-weight:600}
+label.f{display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--muted)}
+input[type=text],input[type=email],input[type=password],input[type=date],input[type=tel],input[type=search],textarea,select{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;color:var(--cowrie)}
+textarea{min-height:72px;resize:vertical}
+input[type=date]{color-scheme:dark}
+.check{display:flex;gap:10px;align-items:center;font-size:14px}
+.check input{width:20px;height:20px;accent-color:var(--ire)}
+.btn{border:0;background:var(--bead);color:#fff;padding:13px;border-radius:12px;font-weight:700;font-size:16px;width:100%}
+.btn:disabled{opacity:.55}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--cowrie);font-weight:600;font-size:14px;padding:10px}
+.btn.small{width:auto;padding:8px 12px;font-size:13.5px}
+.link{background:none;border:0;color:var(--gold);padding:0;font-weight:600;text-decoration:underline;text-underline-offset:3px}
 .grid16{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.num{border:1px solid var(--line);background:var(--panel2);border-radius:10px;padding:8px 4px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:58px}
+.num{border:1px solid var(--line);background:var(--panel2);border-radius:10px;padding:8px 4px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:56px}
 .num .d{font-family:var(--display);font-size:22px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
 .num .t{font-size:10.5px;color:var(--muted);white-space:nowrap}
 .num[aria-pressed="true"]{border-color:var(--gold);background:#2d2a2a;box-shadow:inset 0 0 0 1px var(--gold)}
@@ -61,27 +78,22 @@ h3{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)
 .chip[aria-pressed="true"]{border-color:currentColor}
 .chip.ire[aria-pressed="true"]{color:var(--ire);background:rgba(111,191,142,.1)}
 .chip.oso[aria-pressed="true"]{color:var(--osogbo);background:rgba(224,122,95,.1)}
-.chip.ori{font-size:12px;padding:4px 9px;color:var(--cowrie)}
+.chip.ori{font-size:12px;padding:4px 9px}
 .pol{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .pol button{border:1px solid var(--line);background:var(--panel2);padding:12px;border-radius:12px;font-weight:700;text-align:left}
 .pol button small{display:block;font-weight:400;color:var(--muted);font-size:12px}
 .pol .i[aria-pressed="true"]{border-color:var(--ire);color:var(--ire)}
 .pol .o[aria-pressed="true"]{border-color:var(--osogbo);color:var(--osogbo)}
-input[type=text],textarea{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
-textarea{min-height:70px;resize:vertical}
-.btn{border:0;background:var(--bead);color:#fff;padding:14px;border-radius:12px;font-weight:700;font-size:16px;width:100%}
-.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--cowrie);font-weight:600;font-size:14px;padding:10px}
-.row{display:flex;gap:8px}
-.row>*{flex:1}
-/* Resultado */
 .result{display:flex;flex-direction:column;gap:12px}
 .hero{background:linear-gradient(160deg,#2a2440,#1b2236 60%);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;gap:14px;align-items:center}
-.hero .badge{flex:none;width:62px;height:62px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-size:24px;font-weight:700;border:2px solid var(--gold);color:var(--gold);font-variant-numeric:tabular-nums}
-.hero .nm{font-family:var(--display);font-size:26px;font-weight:700;line-height:1.1}
+.hero .badge{flex:none;width:62px;height:62px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-size:22px;font-weight:700;border:2px solid var(--gold);color:var(--gold);font-variant-numeric:tabular-nums}
+.hero .nm{font-family:var(--display);font-size:25px;font-weight:700;line-height:1.1}
 .hero .meta{font-size:13px;color:var(--muted)}
-.pill{display:inline-block;font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;margin-top:6px}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px}
 .pill.ire{background:rgba(111,191,142,.15);color:var(--ire)}
 .pill.oso{background:rgba(224,122,95,.15);color:var(--osogbo)}
+.pill.gold{background:rgba(207,164,72,.15);color:var(--gold)}
+.pill.ok{background:rgba(111,191,142,.15);color:var(--ire)}
 .refran{font-family:var(--display);font-size:21px;font-style:italic;line-height:1.3;border-left:3px solid var(--bead);padding-left:12px;margin:0}
 .refran+.refran{margin-top:8px}
 ul.l{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px}
@@ -93,97 +105,150 @@ ul.l li::marker{color:var(--gold)}
 .leg b{display:block;font-family:var(--display);font-size:19px}
 .note{font-size:12.5px;color:var(--muted);line-height:1.45}
 .warn{border-left:3px solid var(--gold);padding:10px 12px;background:rgba(207,164,72,.08);border-radius:0 10px 10px 0;font-size:13.5px}
+.err{border-left:3px solid var(--osogbo);padding:10px 12px;background:rgba(224,122,95,.1);border-radius:0 10px 10px 0;font-size:13.5px}
 details{border-top:1px solid var(--line);padding-top:10px}
 details summary{cursor:pointer;font-weight:600;list-style:none}
 details summary::after{content:"＋";float:right;color:var(--muted)}
 details[open] summary::after{content:"－"}
-/* Ifá tablero */
 .tablero{display:flex;justify-content:center;gap:28px;padding:10px 0 4px}
 .pierna{display:flex;flex-direction:column;gap:8px;align-items:center}
 .pierna .cap{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.legcol{display:flex;flex-direction:column;gap:8px}
 .mark{width:64px;height:40px;border:1px solid var(--line);background:var(--panel2);border-radius:9px;display:flex;justify-content:center;align-items:center;gap:9px}
 .mark i{display:block;width:5px;height:22px;background:var(--cowrie);border-radius:3px}
 .odu-name{text-align:center;font-family:var(--display);font-size:22px;font-weight:700}
-/* Listas */
 .search{position:relative}
 .search input{padding-left:36px}
 .search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);opacity:.6}
 .list{display:flex;flex-direction:column;gap:8px}
 .item{display:flex;gap:12px;align-items:center;text-align:left;width:100%;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:11px 12px}
-.item .n{flex:none;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:19px;background:var(--panel2);border:1px solid var(--line);font-variant-numeric:tabular-nums}
+.item .n{flex:none;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:18px;background:var(--panel2);border:1px solid var(--line);font-variant-numeric:tabular-nums;color:var(--cowrie)}
 .item .x{flex:1;min-width:0}
-.item .x b{display:block;font-size:16px}
+.item .x b{display:block;font-size:15.5px}
 .item .x span{display:block;font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.item .sw{width:6px;align-self:stretch;border-radius:3px;flex:none}
-.mini{display:grid;grid-template-columns:repeat(2,6px);gap:3px 4px;flex:none}
+.item .sw{width:5px;align-self:stretch;border-radius:3px;flex:none}
+.item .r{flex:none;font-size:12px;color:var(--muted);text-align:right}
 .matrix{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
 .matrix button{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:8px 4px;font-size:12px;text-align:center}
 .matrix button b{display:block;font-family:var(--display);font-size:16px}
-/* Hoja de detalle */
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 10px}
+.tile b{display:block;font-family:var(--display);font-size:30px;line-height:1;font-variant-numeric:tabular-nums}
+.tile span{font-size:12px;color:var(--muted)}
+.tile.alert b{color:var(--gold)}
+.empty{color:var(--muted);text-align:center;padding:18px 8px;font-size:14px}
 .sheet{position:fixed;inset:0;background:rgba(6,8,14,.6);display:none;z-index:20}
 .sheet.on{display:block}
-.sheet .body{position:absolute;left:0;right:0;bottom:0;max-width:480px;margin:0 auto;max-height:92%;overflow:auto;background:var(--ink);border-top-left-radius:20px;border-top-right-radius:20px;border:1px solid var(--line);padding:10px 16px calc(24px + env(safe-area-inset-bottom))}
+.sheet .body{position:absolute;left:0;right:0;bottom:0;max-width:520px;margin:0 auto;max-height:93%;overflow:auto;background:var(--ink);border-top-left-radius:20px;border-top-right-radius:20px;border:1px solid var(--line);padding:10px 16px calc(24px + env(safe-area-inset-bottom))}
 .grab{width:44px;height:5px;border-radius:3px;background:var(--line);margin:4px auto 10px}
-.close{position:sticky;top:0;float:right;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 12px;font-size:13px}
-/* Barra inferior */
-nav.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--ink);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom));z-index:10}
-nav.tabs .in{max-width:480px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
-nav.tabs button{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;font-size:11.5px;color:var(--muted);font-weight:600}
+.close{position:sticky;top:0;display:block;margin:0 0 10px auto;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 12px;font-size:13px;z-index:2}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--ink);border-top:1px solid var(--line);padding:6px 4px calc(6px + env(safe-area-inset-bottom));z-index:10}
+nav.tabs .in{max-width:520px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
+nav.tabs button{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;font-size:11px;color:var(--muted);font-weight:600}
 nav.tabs button svg{width:22px;height:22px}
 nav.tabs button[aria-current="page"]{color:var(--gold)}
-.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--panel2);border:1px solid var(--gold);padding:10px 16px;border-radius:999px;font-size:14px;display:none;z-index:30}
-.hist{display:flex;flex-direction:column;gap:4px}
-.hist .when{font-size:12px;color:var(--muted)}
-.empty{color:var(--muted);text-align:center;padding:24px 8px}
+.toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:var(--panel2);border:1px solid var(--gold);padding:10px 16px;border-radius:999px;font-size:14px;display:none;z-index:30;max-width:90%;text-align:center}
+/* Pantalla de acceso */
+.auth{min-height:100%;max-width:440px;margin:0 auto;padding:calc(36px + env(safe-area-inset-top)) 20px 30px;display:flex;flex-direction:column;gap:18px}
+.auth .brand{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+.auth .brand h1{font-family:var(--display);font-size:40px;margin:0;line-height:1}
+.auth .brand p{margin:0;color:var(--muted);max-width:34ch}
+.avatar{width:54px;height:54px;border-radius:50%;background:var(--panel2);border:2px solid var(--gold);display:grid;place-items:center;font-family:var(--display);font-size:24px;font-weight:700;color:var(--gold);flex:none}
 @media (prefers-reduced-motion:no-preference){.sheet .body{animation:up .22s ease-out}@keyframes up{from{transform:translateY(30px);opacity:.6}}}
 </style>
 </head>
 <body>
-<div class="app">
+
+<!-- ACCESO -->
+<section class="auth" id="auth" hidden>
+  <div class="brand">
+    <svg class="logo" style="width:64px;height:64px" viewBox="0 0 40 40" aria-hidden="true"><ellipse cx="20" cy="20" rx="13" ry="18" fill="#efe6d2"/><path d="M20 5 C15 14 15 26 20 35 C25 26 25 14 20 5Z" fill="#121726"/><g stroke="#efe6d2" stroke-width="1.6" stroke-linecap="round"><path d="M17 11h-2"/><path d="M16.5 16h-2.5"/><path d="M16.3 21h-2.6"/><path d="M16.5 26h-2.5"/><path d="M17 30h-2"/><path d="M23 11h2"/><path d="M23.5 16h2.5"/><path d="M23.7 21h2.6"/><path d="M23.5 26h2.5"/><path d="M23 30h2"/></g></svg>
+    <h1>Odu Yoruba</h1>
+    <p>La libreta de consultas del olorisha y el babalawo: tus ahijados, sus signos, el ebbó marcado y cuándo volver.</p>
+  </div>
+  <div class="seg" role="group" aria-label="Acceso">
+    <button id="a-login" aria-pressed="true">Entrar</button>
+    <button id="a-reg" aria-pressed="false">Crear cuenta</button>
+  </div>
+  <form class="card stack" id="authForm" novalidate>
+    <label class="f" id="a-nombre-w" hidden>Tu nombre<input type="text" id="a-nombre" autocomplete="name" placeholder="Ej. César Rosillo"></label>
+    <label class="f">Correo<input type="email" id="a-email" autocomplete="email" required placeholder="tu@correo.com"></label>
+    <label class="f">Contraseña<input type="password" id="a-pass" autocomplete="current-password" minlength="6" required placeholder="Mínimo 6 caracteres"></label>
+    <div id="a-msg"></div>
+    <button class="btn" id="a-go" type="submit">Entrar</button>
+    <button class="link" type="button" id="a-forgot">Olvidé mi contraseña</button>
+  </form>
+  <div class="note" style="text-align:center">Tus consultas son privadas: solo tú puedes verlas.</div>
+</section>
+
+<div class="app" id="app" hidden>
   <header class="top">
     <svg class="logo" viewBox="0 0 40 40" aria-hidden="true"><ellipse cx="20" cy="20" rx="13" ry="18" fill="#efe6d2"/><path d="M20 5 C15 14 15 26 20 35 C25 26 25 14 20 5Z" fill="#121726"/><g stroke="#efe6d2" stroke-width="1.6" stroke-linecap="round"><path d="M17 11h-2"/><path d="M16.5 16h-2.5"/><path d="M16.3 21h-2.6"/><path d="M16.5 26h-2.5"/><path d="M17 30h-2"/><path d="M23 11h2"/><path d="M23.5 16h2.5"/><path d="M23.7 21h2.6"/><path d="M23.5 26h2.5"/><path d="M23 30h2"/></g></svg>
-    <div><div class="sub">Osha · Ifá</div><h1>Odu</h1></div>
+    <div><div class="sub">Osha · Ifá</div><h1>Odu Yoruba</h1></div>
+    <span class="sp"></span>
+    <span class="demo" id="demoBadge" hidden>Modo demo</span>
   </header>
   <main>
+    <!-- INICIO -->
+    <section class="view" id="v-inicio" aria-label="Inicio">
+      <h2 id="saludo">Aché</h2>
+      <div class="tiles">
+        <div class="tile"><b id="t-mes">0</b><span>consultas este mes</span></div>
+        <div class="tile"><b id="t-cons">0</b><span>consultados</span></div>
+        <div class="tile" id="t-ebbo-w"><b id="t-ebbo">0</b><span>ebbó pendientes</span></div>
+      </div>
+      <button class="btn" data-go="consulta">Nueva consulta</button>
+      <div class="card"><h3>Ebbó pendientes</h3><div class="list" id="l-ebbo"></div></div>
+      <div class="card"><h3>Próximas citas</h3><div class="list" id="l-citas"></div></div>
+      <div class="card"><h3>Consultas recientes</h3><div class="list" id="l-recientes"></div></div>
+    </section>
+
     <!-- CONSULTA -->
-    <section class="view on" id="v-consulta" aria-label="Consulta">
+    <section class="view" id="v-consulta" aria-label="Consulta">
+      <h2>Nueva consulta</h2>
+      <div class="card stack">
+        <label class="f">¿A quién consultas?
+          <select id="c-quien"></select>
+        </label>
+        <label class="f">Pregunta o motivo (opcional)<input type="text" id="c-pregunta" placeholder="Ej. trabajo, salud, viaje"></label>
+      </div>
       <div class="seg" role="group" aria-label="Sistema">
         <button id="sys-dilo" aria-pressed="true">Diloggún</button>
         <button id="sys-ifa" aria-pressed="false">Ifá</button>
       </div>
-
-      <div id="form-dilo" class="card" style="display:flex;flex-direction:column;gap:14px">
-        <div>
-          <div class="label"><span>1ª tirada · caracoles boca arriba</span><b id="lbl1">—</b></div>
-          <div class="grid16" id="g1"></div>
-        </div>
-        <div>
-          <div class="label"><span>2ª tirada</span><b id="lbl2">—</b></div>
-          <div class="grid16" id="g2"></div>
-        </div>
+      <div id="form-dilo" class="card stack">
+        <div><div class="label"><span>1ª tirada · caracoles boca arriba</span><b id="lbl1">—</b></div><div class="grid16" id="g1"></div></div>
+        <div><div class="label"><span>2ª tirada</span><b id="lbl2">—</b></div><div class="grid16" id="g2"></div></div>
       </div>
-
-      <div id="form-ifa" class="card" style="display:none;flex-direction:column;gap:8px">
+      <div id="form-ifa" class="card stack" hidden>
         <div class="label"><span>Toque cada marca para cambiar entre I y II</span></div>
         <div class="tablero">
-          <div class="pierna"><div class="cap">Izquierda</div><div id="legL"></div></div>
-          <div class="pierna"><div class="cap">Derecha</div><div id="legR"></div></div>
+          <div class="pierna"><div class="cap">Izquierda</div><div class="legcol" id="legL"></div></div>
+          <div class="pierna"><div class="cap">Derecha</div><div class="legcol" id="legR"></div></div>
         </div>
-        <div class="odu-name" id="ifaLive">Baba Ejiogbe</div>
+        <div class="odu-name" id="ifaLive"></div>
         <div class="note" style="text-align:center">La pierna derecha es la primera que se lee. O elija directo:</div>
         <div class="row"><select id="selR" aria-label="Pierna derecha"></select><select id="selL" aria-label="Pierna izquierda"></select></div>
       </div>
-
-      <div class="card" style="display:flex;flex-direction:column;gap:12px">
+      <div class="card stack">
         <div class="pol" role="group" aria-label="Orientación">
           <button class="i" id="pol-ire" aria-pressed="true">Iré<small>Viene con bien</small></button>
           <button class="o" id="pol-oso" aria-pressed="false">Osogbo<small>Viene con mal</small></button>
         </div>
         <div class="chips" id="tipos"></div>
-        <input type="text" id="cliente" placeholder="Nombre del consultado (opcional)" aria-label="Nombre del consultado">
       </div>
       <button class="btn" id="ver">Ver lectura del signo</button>
       <div id="out"></div>
+    </section>
+
+    <!-- CONSULTADOS -->
+    <section class="view" id="v-gente" aria-label="Consultados">
+      <div class="between"><h2>Consultados</h2><button class="btn small" id="nuevoCons">+ Agregar</button></div>
+      <div class="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        <input type="search" id="qg" placeholder="Buscar por nombre o nombre de santo" aria-label="Buscar consultado">
+      </div>
+      <div class="list" id="l-gente"></div>
     </section>
 
     <!-- SIGNOS -->
@@ -195,696 +260,71 @@ nav.tabs button[aria-current="page"]{color:var(--gold)}
       </div>
       <div class="search">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
-        <input type="text" id="q" placeholder="Buscar signo, refrán u Orisha" aria-label="Buscar">
+        <input type="search" id="q" placeholder="Buscar signo, refrán u Orisha" aria-label="Buscar signo">
       </div>
       <div class="chips" id="orifilter"></div>
       <div class="list" id="lib"></div>
       <div id="omoluos"></div>
     </section>
 
-    <!-- HISTORIAL -->
-    <section class="view" id="v-hist" aria-label="Historial">
-      <h2>Consultas guardadas</h2>
-      <div class="note">Se guardan solo en este teléfono o computadora, dentro de la app.</div>
-      <div class="list" id="hist"></div>
-    </section>
-
-    <!-- ACERCA -->
-    <section class="view" id="v-info" aria-label="Acerca">
-      <h2>Sobre esta app</h2>
-      <div class="warn">Esta herramienta es para estudio y para que el olorisha o babalawo registre sus consultas. La lectura, el ebbó y las prohibiciones las marca siempre un sacerdote consagrado, y cada casa tiene su tradición.</div>
-      <div class="card"><h3>Cómo se forma un signo</h3>
-        <p style="margin:0 0 8px">En el <b>Diloggún</b> se tiran 16 caracoles; los que caen con la boca hacia arriba dan el número (1 a 16). Dos tiradas forman el oddun compuesto: 16 × 16 = 256. Del 13 al 16 muchas casas remiten al consultado a Ifá.</p>
-        <p style="margin:0">En <b>Ifá</b> cada pierna del Odu tiene cuatro marcas, simples (I) o dobles (II). Cuando las dos piernas son iguales es un <b>Meji</b> (16); si son distintas, un <b>Omoluo</b> (240). El orden lucumí va de Baba Ejiogbe (1) a Ofun Kana (256).</p>
+    <!-- PERFIL -->
+    <section class="view" id="v-perfil" aria-label="Perfil">
+      <div class="between">
+        <div class="row" style="align-items:center;gap:12px;flex:1"><div class="avatar" id="p-avatar">O</div><div style="flex:1;min-width:0"><h2 id="p-titulo" style="margin:0">Mi perfil</h2><div class="note" id="p-email"></div></div></div>
       </div>
-      <div class="card"><h3>Equivalencias Diloggún ↔ Ifá</h3><div id="equiv" class="list"></div></div>
-      <div class="card"><h3>Qué contiene</h3>
-        <ul class="l">
-          <li>16 oddun del Diloggún con refranes, Orishas que hablan, qué nace, iré y osogbo, consejos, prohibiciones, ebbó, patakí y gesto al salir.</li>
-          <li>256 combinaciones del Diloggún generadas, con refrán propio en las que está documentado.</li>
-          <li>16 Odu Meji de Ifá con su marca, orden, refranes, ebbó y patakí, y los 240 Omoluos con su orden y número.</li>
-          <li>Historial con notas del padrino o la madrina.</li>
-        </ul>
+      <form class="card stack" id="perfilForm">
+        <label class="f">Nombre<input type="text" id="p-nombre" autocomplete="name"></label>
+        <label class="f">Nombre de santo<input type="text" id="p-santo" placeholder="Ej. Omi Saidé"></label>
+        <div class="row">
+          <label class="f">Soy
+            <select id="p-tipo"><option value="olorisha">Olorisha</option><option value="iyalorisha">Iyalorisha</option><option value="babalawo">Babalawo</option><option value="iyanifa">Iyanifá</option><option value="aleyo">Aleyo</option><option value="otro">Otro</option></select>
+          </label>
+          <label class="f">Orisha de cabecera<input type="text" id="p-orisha" placeholder="Ej. Oshún"></label>
+        </div>
+        <label class="f">Casa o ilé<input type="text" id="p-casa"></label>
+        <label class="f">Padrino o madrina<input type="text" id="p-padrino"></label>
+        <div class="row">
+          <label class="f">Teléfono<input type="tel" id="p-tel"></label>
+          <label class="f">País<input type="text" id="p-pais" placeholder="Venezuela"></label>
+        </div>
+        <button class="btn" type="submit">Guardar perfil</button>
+      </form>
+      <div class="card stack">
+        <div class="between"><span>Plan</span><span class="pill gold" id="p-plan">Gratis</span></div>
+        <div class="row"><button class="btn ghost" id="exportar">Copiar mis datos</button><button class="btn ghost" id="salir">Cerrar sesión</button></div>
       </div>
-      <div class="card"><h3>Fuentes consultadas</h3>
-        <ul class="l note" style="font-size:13px">
+      <div class="warn">Esta herramienta es para estudio y para llevar el registro de tus consultas. La lectura, el ebbó y las prohibiciones las marca siempre un sacerdote consagrado, y cada casa tiene su tradición.</div>
+      <details class="card"><summary>Equivalencias Diloggún ↔ Ifá</summary><div id="equiv" class="list" style="margin-top:10px"></div></details>
+      <details class="card"><summary>Fuentes del contenido</summary>
+        <ul class="l note" style="font-size:13px;margin-top:10px">
           <li>ashepamicuba.com: significado de los oddun y sus refranes</li>
-          <li>appodun.blogspot.com: signos del Diloggún (positivo y negativo)</li>
+          <li>appodun.blogspot.com: signos del Diloggún</li>
           <li>elbauldethorn.wordpress.com: oddun Okana</li>
           <li>dilogunvenezuela.blogspot.com: oddun compuestos</li>
-          <li>ancestraworld.com: familias de signos</li>
-          <li>en.oshaeifa.com: tratados de los Odu Meji de Ifá</li>
+          <li>en.oshaeifa.com: Odu Meji de Ifá</li>
           <li>EcuRed y Wikipedia: Diloggún y Babalú Ayé</li>
         </ul>
-        <div class="note" style="margin-top:8px">El contenido viene de esas fuentes; solo cambié la redacción. Lo que no tenía fuente verificada quedó marcado como «por documentar». Las marcas del tablero, los tipos de iré y osogbo y los apodos cubanos de los Omoluos son conocimiento tradicional general que la casa debe confirmar.</div>
-      </div>
+        <div class="note" style="margin-top:8px">Textos redactados de nuevo a partir de esas fuentes. Lo marcado «por documentar» no tenía fuente confiable.</div>
+      </details>
     </section>
   </main>
 </div>
 
-<nav class="tabs" aria-label="Secciones"><div class="in">
-  <button data-v="consulta" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><ellipse cx="12" cy="12" rx="6" ry="9"/><path d="M12 4v16"/></svg>Consulta</button>
+<nav class="tabs" id="tabs" aria-label="Secciones" hidden><div class="in">
+  <button data-v="inicio" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/></svg>Inicio</button>
+  <button data-v="consulta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><ellipse cx="12" cy="12" rx="6" ry="9"/><path d="M12 4v16"/></svg>Consulta</button>
+  <button data-v="gente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.8c1.8.7 3 2.4 3.5 5.2"/></svg>Consultados</button>
   <button data-v="signos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h6a2 2 0 0 1 2 2v13a2 2 0 0 0-2-2H4zM20 5h-6a2 2 0 0 0-2 2v13a2 2 0 0 1 2-2h6z"/></svg>Signos</button>
-  <button data-v="hist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Historial</button>
-  <button data-v="info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><path d="M12 11v5M12 8h.01"/></svg>Acerca</button>
+  <button data-v="perfil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.2 4.2-6.5 8-6.5s7 2.3 8 6.5"/></svg>Perfil</button>
 </div></nav>
 
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Detalle"><div class="body"><div class="grab"></div><button class="close" id="closeSheet">Cerrar</button><div id="sheetBody"></div></div></div>
 <div class="toast" id="toast" role="status"></div>
 
-<script>
-// Base de datos: Diloggún (Merindilogún) — 16 oddun principales
-// Contenido redactado a partir de fuentes tradicionales públicas; cada casa religiosa puede variar.
-window.DILOGGUN = [
-{
-  n:1, nombre:"Okana", alias:["Okana Sode","Okanasode"], ifa:8, color:"#b3261e",
-  refranes:["Por uno empezó el mundo.","Si no hay bueno, no hay malo.","El que bien hace o mal hace, para sí lo hace.","Todo en el mundo tiene su fin."],
-  orishas:["Elegguá","Eshu","Aggayú","Eggun","Obbatalá","Oggún","Shangó"],
-  nace:["Las enfermedades contagiosas","La vesícula biliar","La cicatrización de las heridas","El principio de todo lo que se emprende"],
-  resumen:"Letra de inicios y de advertencia. Lo grande empieza pequeño, pero hay que escuchar consejo: quien no lo oye ve caer sus cosas al piso.",
-  ire:"La persona es ordenada, persistente y buena planificadora. Lo que empieza desde abajo, con trabajo y sacrificio, crece en todos los aspectos.",
-  osogbo:"Mala suerte, contrariedades, terquedad y arranques que destruyen lo construido. Riesgo de robos, pérdidas, peleas de pareja y enemigos cercanos. Se pregunta bien con quién habla y qué anuncia: muerte, enfermedad o cárcel.",
-  consejos:["Preste atención a lo que se le dice: si está haciendo o pensando algo malo, no lo haga, porque se va a descubrir.","No comente sus proyectos; atraen envidia.","Busque apoyo en su propia familia aunque le haya fallado.","Si tiene que viajar, haga ebbó antes y deje sus cosas bien guardadas.","Si hay enfermedad, lleve a la persona al médico enseguida."],
-  prohibiciones:["No maldecir ni renegar","No pelear en casa ni levantar la mano a nadie","No oír chismes","No guardar nada de nadie sin saber lo que es","No andar solo de noche ni usar armas","No hacer bromas pesadas ni maltratar animales","No comer en casa de cualquiera"],
-  ebbo:["Aunque la letra venga en iré, se hace ebbó.","Limpieza con un pedazo de carne de res untada en epó (manteca de corojo); se limpia a los presentes y se bota a la calle.","Ofrenda a los guerreros (Elegguá, Oggún, Oshosi) con gallo, paloma y jutía, según marque el oráculo.","Tierra de la puerta para Elegguá; en iré, dar de comer a Eshu en la puerta.","Misa o atención a los muertos (Eggun)."],
-  gesto:"Al salir se halan las orejas, se chasquean los dedos tres veces y se refrescan los caracoles en una jícara con agua que luego se bota a la calle.",
-  pataki:{titulo:"El majá que no hizo ebbó",texto:"Cuando los animales fueron advertidos de hacer ebbó, el majá (la serpiente) se negó y siguió su camino confiado. La desgracia lo alcanzó y perdió piernas y brazos, condenado a arrastrarse para siempre. En otra historia de esta letra, un hombre discutidor, expulsado de su pueblo por su carácter, rechazó también el ebbó que el rey exigía; lo apresaron acusado de traidor y murió en prisión.",ensenanza:"El ebbó no se discute: quien desoye el consejo paga con lo que más necesita."}
-},
-{
-  n:2, nombre:"Eyioko", alias:["Ellioko","Eji Oko"], ifa:2, color:"#2e5e4e",
-  refranes:["Flecha entre hermanos.","Cuando lances flechas, cuídate, que te puedes herir tú o a los tuyos.","Un nuevo comienzo fructífero nace de saber terminar."],
-  orishas:["Oshosi","Elegguá","Oggún","Orisha Oko","Orunmila","Obbatalá","Shangó","Ibeyis"],
-  nace:["La flecha entre hermanos","Los animales de pluma","Los jimaguas (Ibeyis)","El sentido del pudor"],
-  resumen:"Habla de rivalidad entre hermanos (de sangre o de religión) y de que Osha reclama a la persona. Eyioko gobierna la tierra y el mundo de los espíritus.",
-  ire:"Personas intuitivas, persistentes y adaptables, capaces de renacer después de un fracaso. Buen momento para empezar algo nuevo si se cierra bien lo anterior.",
-  osogbo:"Mal carácter y maldiciones que atrasan; pérdidas económicas, conflictos familiares y problemas con la justicia. Si sale repetido puede indicar enfermedad.",
-  consejos:["No guarde rencores; arregle las diferencias con sus hermanos.","Sea legal y sincero en todo.","Planifique y no deje para mañana lo que puede hacer hoy.","Cuide las piernas y la columna.","Póngase los elekes (collares) o refrésquelos si ya los tiene."],
-  prohibiciones:["No hablar de sus proyectos","No comer carne de cerdo","No prestar lo suyo","No entrar en sótanos ni excavaciones","No maldecir ni tirar cosas cuando se disgusta","No permitir discusiones en la casa"],
-  ebbo:["Hacer ebbó de forma constante; se lleva a una casa en ruinas, a un árbol seco o se entierra.","Atender y dar de comer a los Ibeyis (jimaguas) si los tiene.","Con problemas de justicia, recibir u ofrendar a Oshosi."],
-  gesto:"Al salir, quien consulta se levanta, da una vuelta y se vuelve a sentar; se cruzan los índices haciendo el gesto de tirar flechas.",
-  pataki:{titulo:"El cielo y la tierra (explicación de origen)",texto:"Al principio el cielo lo gobernaba Eyeunle y la tierra Eyioko. Por eso Eyeunle rige sobre los vivos y la cabeza, mientras Eyioko quedó como dueño del mundo de los muertos y de lo que yace bajo la tierra. Cada uno respetó el dominio del otro y así se mantuvo el equilibrio.",ensenanza:"Cada cual tiene su lugar; invadir el ajeno trae guerra entre hermanos."}
-},
-{
-  n:3, nombre:"Ogunda", alias:["Oggunda"], ifa:9, color:"#3d3d3d",
-  refranes:["Guerra, tragedia por una cosa.","Lo que no se lucha no se aprecia.","El cuchillo y el hierro quieren guerra y sangre."],
-  orishas:["Oggún","Oshosi","Elegguá","Yemayá","Obbatalá","Aggayú","Olofin","Babalú Ayé"],
-  nace:["La cirugía y la autopsia","La ciencia de la guerra y las armas","El hierro","El oti (aguardiente)","Las enfermedades venéreas"],
-  resumen:"Letra de Oggún: disputa por una persona o por un bien. Pide no endeudarse, no ser agresivo y apoyarse en los guerreros.",
-  ire:"Personas trabajadoras, luchadoras y protectoras de su familia y de los desvalidos; vencen obstáculos con esfuerzo.",
-  osogbo:"Agresividad, peleas, rencor y riesgo de accidentes con armas u objetos de hierro. El licor es su peor enemigo. Cuidar hígado, corazón, riñones y la presión.",
-  consejos:["Reciba los guerreros si no los tiene.","No intente que los demás sean como usted.","No deje las cosas a medias ni se esclavice al trabajo.","No haga negocios donde usted sea el tercero.","Guarde bajo llave cuchillos y armas de la casa."],
-  prohibiciones:["No ser porfiado ni agresivo","No beber en exceso","No levantar cuchillos para agredir (se les corta la punta a los de la casa)","No confiar en cualquiera","No endeudarse"],
-  ebbo:["En iré u osogbo: limpieza con carne de res que se coloca a Oggún.","En osogbo: usar un ashabá (cadena) en el tobillo izquierdo y dar de comer a los guerreros."],
-  gesto:"Al salir se dan tres palmadas en el vientre con ambas manos, se juntan y se sopla hacia afuera.",
-  pataki:{titulo:"Los dos pescadores",texto:"Un hombre fue a pescar al lugar donde otro ya tenía su sitio. Cuando sacó un pez, el primero lo reclamó como suyo y empezaron a pelear por él. Mientras se golpeaban y discutían, el pez se escurrió de vuelta al agua y ninguno de los dos se lo llevó.",ensenanza:"En la guerra por una cosa, la cosa se pierde."}
-},
-{
-  n:4, nombre:"Iroso", alias:["Irosun","Irozo"], ifa:5, color:"#1f3a68",
-  refranes:["Nadie sabe lo que hay en el fondo del mar.","Los bienes no son sueños, son realidades.","No hay peor ciego que el que no quiere ver."],
-  orishas:["Olokun","Orunmila","Shangó","Yewá","Elegguá","Oshosi","Yemayá","Obbatalá","Aggayú","Ibeyis","Babalú Ayé"],
-  nace:["La humildad","Las fosas mortuorias y los huecos","El ituto","Los papeles y las escrituras (los secretos)"],
-  resumen:"Letra de secretos y de la vista: habla de pasado, presente y futuro. Hay que ser reservado con los planes y fijarse bien en quién se confía.",
-  ire:"Inteligencia, visión, responsabilidad familiar y cariño. Invita a un examen de conciencia y a actuar con firmeza.",
-  osogbo:"Soñar despierto hasta perder la realidad; trampas, robos, engaños, envidias y traiciones. Cuidado al firmar papeles.",
-  consejos:["Sea discreto con sus planes.","Piense antes de actuar y fíjese en quién confía.","Tape los huecos de la casa.","Recibir Olokun (urge en Iroso Odi, 4-7) y, según la casa, Osun y Dadá."],
-  prohibiciones:["No hacer negocios turbios","No firmar papeles sin revisarlos","No asomarse a pozos ni huecos"],
-  ebbo:["Dar de comer a Eshu.","Atender a Olokun y a Yemayá."],
-  gesto:"Al salir se llevan los dedos del corazón a la estera y se abren mucho los ojos.",
-  pataki:{titulo:"El banquete del gobernador",texto:"Un hombre llegó a gobernar un país e invitó a sus vecinos a un gran banquete, pero a propósito les sirvió la peor comida y bebida. Todos comieron sin decir nada en la mesa; al salir, en cambio, murmuraron y se quejaron a sus espaldas. Así entendió que compartían sus bienes, pero no eran sus amigos.",ensenanza:"Lo que hay en el fondo de cada quien no se ve a simple vista."}
-},
-{
-  n:5, nombre:"Oshé", alias:["Ose","Oche"], ifa:15, color:"#c8962a",
-  refranes:["Sangre que corre por las venas.","Perdiendo también se gana.","El mal que le quieren hacer le servirá de bien.","Si hablas mucho, cansas la lengua y a los que tienes al lado."],
-  orishas:["Oshún","Elegguá","Yemayá","Shangó","Orunmila","Olokun"],
-  nace:["La sangre que corre por las venas","Los perfumes","Los genios y la música","Los huesos y las articulaciones"],
-  resumen:"Letra de Oshún: familia, continuidad, sangre y prosperidad. Habla de malentendidos familiares que hay que resolver a tiempo.",
-  ire:"Prosperidad económica y espiritual, fertilidad y vitalidad. Personas leales, hogareñas y protectoras de los suyos.",
-  osogbo:"Problemas de sangre y circulación, vicios, vanidad, rencor, hablar de más y peleas en la familia. Lo sentimental no está protegido.",
-  consejos:["Cuídese la sangre y hágase chequeos.","Resuelva los malentendidos familiares antes de que crezcan.","Busque la prosperidad con ebbó: no vendrá sola.","Sacrifique a Oshún y a Orunmila.","Marca recibir Orunmila y, según la casa, Osun y Dadá."],
-  prohibiciones:["No hablar de más","No prometer lo que no puede cumplir","No hacer rogación con babosa salvo que el Eledá u Osha la pida"],
-  ebbo:["En iré, se le pone a Elegguá ekú, eyá y epó (jutía, pescado ahumado y manteca de corojo).","Si sale con Olokun, ebbó constante al pie de Olokun.","Si es oddun de cabecera, usar una pluma de loro en el pelo."],
-  gesto:"Al salir se dan palmadas sobre los muslos y a los lados.",
-  pataki:{titulo:"El charco envenenado",texto:"Un viajero llegó agotado y con sed a un lugar donde había un charco. La gente que estaba allí sabía que el agua estaba contaminada, pero por malicia lo animaron a beber. Él confió, tomó el agua, enfermó y le salieron llagas por todo el cuerpo.",ensenanza:"No toda boca dulce quiere su bien: cuide su sangre y su confianza."}
-},
-{
-  n:6, nombre:"Obara", alias:["Obbara"], ifa:7, color:"#a0521d",
-  refranes:["Un rey no miente.","La lengua salva o hunde a la humanidad.","No todo lo que se come es bueno decirlo.","De mil, crean una; de cien, ninguna."],
-  orishas:["Shangó","Oshún","Elegguá","Orunmila","Oshosi","Osun","Dadá"],
-  nace:["La riqueza","Las vísceras","El lenguaje: la verdad y la mentira","Los negocios y el comercio"],
-  resumen:"Letra de Shangó y del habla: se puede pasar de mendigo a rey y de rey a mendigo según cómo se use la palabra.",
-  ire:"Comercio, liderazgo, buena argumentación, longevidad y capacidad de trabajo. Gente generosa y de buen humor.",
-  osogbo:"Mentiras, chismes, gastos excesivos, orgullo, vivir de apariencias, mudanzas e inestabilidad.",
-  consejos:["Cumpla, aunque sea llorando, lo que prometió sonriendo.","Aprenda a callar y a escuchar consejo.","Ahorre y administre bien.","Marca recibir Orunmila y Dadá."],
-  prohibiciones:["No mentir ni vivir de apariencias","No comer en exceso ni botar la comida","No brindar bebidas en las fiestas"],
-  ebbo:["Ebbó a Shangó y a Elegguá según indique el oráculo."],
-  gesto:"Al salir se levanta primero una nalga y luego la otra.",
-  pataki:{titulo:"El rey que perdió el trono",texto:"Un rey consultó a Orula solo por curiosidad y este le advirtió de un peligro dentro de su propio palacio. El rey se burló, porque confiaba en los suyos. Tiempo después tuvo que ausentarse, dejó el gobierno a un hombre de confianza y este se lo quitó. Solo cuando el rey hizo el ebbó, Orula lo ayudó a recuperar la corona y a cambiar a sus funcionarios.",ensenanza:"El consejo que hoy parece de sobra es el que mañana devuelve la corona."}
-},
-{
-  n:7, nombre:"Odi", alias:["Oddi"], ifa:4, color:"#0e5f76",
-  refranes:["Donde se abrió el hueco por primera vez.","Los peces grandes se cogen en el mar con suerte y buena carnada.","Por culpa del adulterio se abrió la sepultura."],
-  orishas:["Yemayá","Inle","Oggún","Elegguá","Oshún","Babalú Ayé","Obbatalá","Oshosi","Oyá"],
-  nace:["Los órganos femeninos","El mar","El susto","La sexualidad y la reproducción","El chisme y la calumnia (en negativo)"],
-  resumen:"Letra de Yemayá: cambios y nuevos comienzos, fertilidad, pero también infidelidad y huecos que no se deben abrir.",
-  ire:"Matrimonio, familia y amistad; fertilidad, sociabilidad y perseverancia. Siempre algo renace.",
-  osogbo:"Pérdidas, estafas, infidelidad, pesadillas, dependencia emocional y vicios.",
-  consejos:["Trabaje el campo espiritual y consulte con sus Eggun.","Si tiene Shangó, apóyese en él.","Descanse para no agotar cuerpo y mente.","Busque la solución dentro de usted, no afuera."],
-  prohibiciones:["No abrir huecos en la casa","No guardar paquetes ni encargos ajenos","No contar secretos","No provocar separaciones"],
-  ebbo:["Ebbó con Yemayá y con Elegguá según marque el oráculo."],
-  gesto:"Al salir se mece el cuerpo de un lado a otro.",
-  pataki:{titulo:"Los tres muñecos",texto:"Un hombre de pocos recursos derrochaba lo poco que tenía. Orula le marcó un ebbó, pero se negó a pagarlo. Elegguá dio vida a tres muñecos y se los vendió juntos; al llegar a casa, los espíritus de los muñecos despertaron y lo aterrorizaron de noche. Asustado, se deshizo de ellos y fue a hacer el ebbó.",ensenanza:"Lo que se ahorra en ebbó se paga en susto."}
-},
-{
-  n:8, nombre:"Eyeunle", alias:["Elleunle","Ejionle"], ifa:1, color:"#e8e2d0",
-  refranes:["La cabeza es la que lleva al cuerpo.","Un solo rey gobierna un pueblo.","La terquedad y la soberbia lo destruyen todo."],
-  orishas:["Obbatalá","Orunmila","Oshún","Oke","Obba","Naná Burukú","Todos los Orishas"],
-  nace:["Los vasos sanguíneos","El principio de todas las cosas","La consagración de Orí","La presentación de los animales a los Orishas"],
-  resumen:"Letra de Obbatalá y de la cabeza: liderazgo con paciencia. Hay que pensar antes de actuar.",
-  ire:"Liderazgo, inteligencia, humildad, honestidad y larga vida.",
-  osogbo:"Terquedad, mal carácter, soberbia, extremos y depresión cuando no se sale con la suya.",
-  consejos:["Cuídese mucho la cabeza; se le unta cascarilla en la frente.","Analice antes de actuar y controle las emociones.","Escuche a los mayores.","No diga «yo sé»: nadie lo sabe todo."],
-  prohibiciones:["Evitar alcohol, drogas y arranques de ira","No ser soberbio"],
-  ebbo:["Rogación de cabeza con Obbatalá.","Cascarilla en la frente del consultado."],
-  gesto:"Al salir se cruzan los brazos y se inclina un poco la cabeza.",
-  pataki:{titulo:"El rey que perdió la corona",texto:"Un rey orgulloso no quería tratar con su pueblo ni con sus criados. Cuando su hija enfermó, tuvo que ir a casa de Elegguá y, al entrar, tropezó y se le cayó la corona. La gente la escondió y él tuvo que buscarla de puerta en puerta. Al recuperarla comprendió que su orgullo no le había servido de nada.",ensenanza:"La cabeza manda, pero se inclina."}
-},
-{
-  n:9, nombre:"Osá", alias:["Ossa"], ifa:10, color:"#7a3b8f",
-  refranes:["Su mejor amigo es su peor enemigo.","Lo que dejes atrás, atrás se queda.","Camarón que se duerme se lo lleva la corriente."],
-  orishas:["Oyá","Aggayú","Obbatalá","Oduduwa","Eggun","Oggún","Obba","Babalú Ayé","Yewá","Oke"],
-  nace:["Las adenoides y la sinusitis","Los glóbulos rojos y órganos internos","Los Orishas"],
-  resumen:"Letra de Oyá: viento, cambio e inestabilidad. Advierte traición de amigos y pide atender a los muertos.",
-  ire:"Movimiento, metas, diplomacia, astucia y liderazgo. Su enemigo es el estancamiento.",
-  osogbo:"Traición, falsedad, chismes, terquedad, depresión y vínculo fuerte con la muerte. Cuidar las vías respiratorias.",
-  consejos:["No confíe sus cosas a cualquier amigo.","Atienda y dé de comer a sus muertos.","Construya su bienestar trabajando, no esperando.","Si es hijo de Yemayá o de Shangó, marca recibir Oyá."],
-  prohibiciones:["No usar disfraces ni vestirse igual que otros","No dormir en exceso","No exponerse a tormentas ni hacerse el héroe","No ser violento"],
-  ebbo:["El mejor ebbó de Osá es atender a los Eggun.","En Itá con osogbo, ofrenda al muerto (araonú) según marque el oráculo."],
-  gesto:"Al salir se menea la cabeza de un lado a otro.",
-  pataki:{titulo:"Shangó y Oggún",texto:"Shangó y Oggún eran grandes amigos hasta que los chismes de la gente los pusieron a pelear. Oggún clavó estacas de hierro esperando que Shangó bajara, pero este lanzó rayos desde el cielo y Oggún tuvo que refugiarse en una loma. Al final se reconciliaron y entendieron que habían sido víctimas de las lenguas ajenas.",ensenanza:"El chisme convierte al amigo en enemigo."}
-},
-{
-  n:10, nombre:"Ofún", alias:["Ofun Mafun"], ifa:16, color:"#f2efe6",
-  refranes:["Donde nace la maldición.","El que por amor construye, por odio lo destruye.","Al que maldice, lo maldicen."],
-  orishas:["Obbatalá","Oshún","Oyá","Oduduwa","Eggun","Iroko","Yewá","Naná Burukú","Babalú Ayé","Osain","Elegguá","Oggún"],
-  nace:["La sabiduría","Los fenómenos y enfermedades extrañas","La maldición","La codicia por dinero y fama"],
-  resumen:"Letra de Obbatalá y de la maldición: prohíbe maldecir y pide pureza. Hablan los Eshu de la calle.",
-  ire:"Mente y cuerpo limpios, honestidad, sabiduría, paciencia y gratitud.",
-  osogbo:"Compromisos rotos, amargura, chismes, estallidos por problemas acumulados, vicios. Cuidar estómago y genitales.",
-  consejos:["No maldiga ni deje que maldigan en su casa.","Vístase mucho de blanco.","Haga ebbó a los guerreros.","Según la casa, recibir Elegguá, Iroko, Naná Burukú, Dadá, Oyá u Orunmila."],
-  prohibiciones:["No maldecir","No comer huevos"],
-  ebbo:["Sara ekó: jícara con agua, ekó, manteca de cacao, cascarilla y una hoja de prodigiosa; todos beben un poco, el resto va al pie de Elegguá y Obbatalá y de noche se bota a la calle.","Baños de hierbas (ebbó misí)."],
-  gesto:"Al salir se cubre la vista con ambas manos, se toca el vientre y se sopla hacia afuera.",
-  pataki:{titulo:"Ananagú",texto:"A Ofún le gustaba criar hijos ajenos y unos padres le confiaron a su niña, Ananagú. Ofún guardaba seres extraños en un cuarto y le prohibió entrar allí. La curiosidad pudo más; la niña abrió la puerta y murió del susto. Cuando la madre volvió, exigió que le devolviera a su hija como se la había entregado, bajo amenaza de maldición.",ensenanza:"Lo prohibido tiene razón de ser; y la maldición vuelve a quien la provoca."}
-},
-{
-  n:11, nombre:"Ojuani", alias:["Owonrin","Ojuani Shobi"], ifa:6, color:"#5b4636",
-  refranes:["Sacar agua con canasta.","El que no agradece, mal padece.","El agradecimiento es la memoria del corazón."],
-  orishas:["Elegguá","Eshu","Eggun","Oshún","Babalú Ayé","Obbatalá"],
-  nace:["Los arayé (pleitos y reyertas)","Las revoluciones","La individualidad y las huellas digitales","La estera y los objetos de mimbre"],
-  resumen:"Letra de Elegguá: esfuerzo que no rinde e ingratitud. Hay que quererse primero a uno mismo.",
-  ire:"Cambios y progreso; personas adaptables, trabajadoras, ahorrativas y buenas comerciantes.",
-  osogbo:"Trampas, mentiras, esfuerzo sin recompensa, celos, ingratitud y problemas con la justicia.",
-  consejos:["Piense para acertar, calle para resistir y actúe para vencer.","No ofrezca ayuda si no se la piden.","No permita cosas ilegales en su casa.","Cuide huesos, sangre y articulaciones; vaya al médico."],
-  prohibiciones:["No desperdiciar dinero ni esfuerzo","No vivir al margen de la ley"],
-  ebbo:["Dar de comer a Elegguá y a la sombra.","Poner sara ekó a Elegguá.","En iré, se echa el diloggún en agua y el agua se bota a la calle.","Baño de Ojuani con omiero de Elegguá y de Obbatalá."],
-  gesto:"Al salir se mueven sobre la estera los dedos de ambas manos.",
-  pataki:{titulo:"Orunmila y Aukó",texto:"Orunmila iba a una reunión de los Orishas, pero se le hincharon los pies y no podía seguir. Aukó (el chivo) se ofreció a cargarlo. Al llegar, la ceremonia pedía una ofrenda en la puerta y Orunmila no traía ninguna, así que tomó a Aukó. Este le reprochó que así le pagaba su ayuda; Orunmila le dijo que era necesario para el bien de la humanidad y que siempre le estaría agradecido.",ensenanza:"La gratitud y el sacrificio caminan juntos."}
-},
-{
-  n:12, nombre:"Eyilá", alias:["Eyila Shebora","Ejila Shebora"], ifa:12, color:"#c62828",
-  refranes:["Cuando hay guerra, el soldado no duerme.","Su bienestar tiene que guerrearlo.","Querer vencer es haber andado la mitad del camino."],
-  orishas:["Shangó","Oke","Osain","Oyá","Yewá","Oshún","Obba","Iroko","Oggún","Aggayú"],
-  nace:["Los leucocitos","La delgadez","La esperanza y la lógica","La candela y la guerra"],
-  resumen:"Letra de Shangó: candela y guerra. Personas siempre alertas que deben dominar su impulsividad.",
-  ire:"Energía, persistencia, inteligencia y aceptación social; el bienestar se gana luchando.",
-  osogbo:"Testarudez, celos, mal carácter, mentiras, vicios y accidentes con fuego o electricidad.",
-  consejos:["Mantenga a Shangó contento y use su collar.","Póngase el collar de Obbatalá para calmar la violencia.","No se meta en problemas ajenos.","No críe hijos ajenos ni consuma lo que dejan otros."],
-  prohibiciones:["Cuidado con el fuego y la electricidad","Evitar alcohol y vicios"],
-  ebbo:["Se tiran los caracoles al suelo y se les echa agua fresca.","Jícara con sara ekó donde se apaga un hierro al rojo vivo o una brasa (ebbó de candela con Shangó)."],
-  gesto:"Al salir se levantan las nalgas de la estera y se saluda a Shangó.",
-  pataki:{titulo:"El rey Aggayú y los barcos",texto:"El rey Aggayú notó que su pueblo pasaba hambre porque la comida de los barcos nunca llegaba. Investigó y descubrió que Oggan robaba los alimentos después del desembarco. Oggan confesó que lo hacía por orden de Shangó, quien, al verse descubierto, tuvo que reconocer su falta y aceptar el castigo del pueblo.",ensenanza:"Ni el más fuerte escapa de rendir cuentas."}
-},
-{
-  n:13, nombre:"Metanlá", alias:["Metanla"], ifa:14, color:"#5e35b1",
-  refranes:[],
-  orishas:["Babalú Ayé","Obbatalá","Oshún","Elegguá","Shangó","Naná Burukú"],
-  nace:[],
-  resumen:"Letra fundamental de Babalú Ayé (San Lázaro). Habla de salud, contagios y humildad. En muchas casas, del 13 en adelante el santero remite al consultado a Ifá.",
-  ire:"Recuperación de la salud por la mano de Babalú Ayé; protección para quien le es fiel.",
-  osogbo:"Enfermedades de piel, sangre y contagios; miseria y abandono.",
-  consejos:["Atienda a Babalú Ayé y cumpla sus promesas.","Cuide la higiene y la salud; vaya al médico.","Sea humilde y caritativo con los enfermos."],
-  prohibiciones:["No burlarse de enfermos ni de pobres"],
-  ebbo:["Consultar con Ifá cuando la casa lo indique."],
-  gesto:"",
-  pataki:{titulo:"El destierro de Babalú Ayé",texto:"Por su conducta, Babalú Ayé enfermó y los mayores de su pueblo lo expulsaron. Se limpió con lo que le marcaron, enterró el ebbó y caminó, acompañado por dos perros que le dio Oggún, hasta otra tierra donde fue recibido y proclamado rey.",ensenanza:"Quien se purifica con humildad encuentra su reino."}
-},
-{
-  n:14, nombre:"Merinlá", alias:["Merinla"], ifa:11, color:"#00695c",
-  refranes:[],
-  orishas:["Olokun","Yemayá","Naná Burukú","Yewá","Oduduwa","Obbatalá"],
-  nace:[],
-  resumen:"Letra acompañante; tradicionalmente su interpretación completa corresponde al babalawo. Los hechos pesan más que las palabras.",
-  ire:"Regreso de lo perdido y apoyo de Olokun y Yemayá.",
-  osogbo:"Pruebas inesperadas enviadas por los Orishas; vueltas de la vida.",
-  consejos:["Esté atento a hechos inesperados.","Remita la consulta a Ifá si la casa así lo indica."],
-  prohibiciones:[],
-  ebbo:["Según marque el babalawo."],
-  gesto:"",
-  pataki:{titulo:"(Por documentar)",texto:"La casa religiosa puede añadir aquí su patakí propio para esta letra.",ensenanza:""}
-},
-{
-  n:15, nombre:"Marunlá", alias:["Marunla"], ifa:3, color:"#ad1457",
-  refranes:[],
-  orishas:["Oshún","Orunmila","Yemayá","Oshosi","Obbatalá"],
-  nace:[],
-  resumen:"Letra acompañante; tradicionalmente su interpretación completa corresponde al babalawo.",
-  ire:"Superación de pruebas con ayuda de Oshún y Orunmila.",
-  osogbo:"Sucesos inesperados que ponen a prueba la fe.",
-  consejos:["Actúe más y prometa menos.","Remita la consulta a Ifá si la casa así lo indica."],
-  prohibiciones:[],
-  ebbo:["Según marque el babalawo."],
-  gesto:"",
-  pataki:{titulo:"(Por documentar)",texto:"La casa religiosa puede añadir aquí su patakí propio para esta letra.",ensenanza:""}
-},
-{
-  n:16, nombre:"Merindilogún", alias:["Merindiloggun"], ifa:13, color:"#f5f5f5",
-  refranes:[],
-  orishas:["Olodumare","Olofin","Obbatalá"],
-  nace:[],
-  resumen:"Habla Olofin. Letra mayor; en la tradición cubana su lectura corresponde a Ifá.",
-  ire:"Bendición de Olofin.",
-  osogbo:"Asuntos que solo puede resolver Ifá.",
-  consejos:["Remita la consulta a un babalawo."],
-  prohibiciones:[],
-  ebbo:["Según marque el babalawo."],
-  gesto:"",
-  pataki:{titulo:"(Por documentar)",texto:"La casa religiosa puede añadir aquí su patakí propio para esta letra.",ensenanza:""}
-}
-];
-
-// Refranes conocidos de algunos oddun compuestos (primera-segunda)
-window.DILOGGUN_COMPUESTOS = {
-  "2-5":{refran:"El dinero saca tragedia.",nota:"El desespero por dinero y la avaricia sirven para el propio entierro. Si viaja, deje sus cosas cuidadas."},
-  "5-3":{refran:"Lo que se abandona no se recoge de nuevo.",nota:"Antes de ir a donde lo mandan a buscar, haga ebbó. Mastique bien los alimentos."},
-  "5-5":{refran:"Sangre que corre por las venas.",nota:"Oshé Meyi: cuidar la salud, sobre todo la sangre. Haga ebbó y busque la prosperidad, que no vendrá sola."},
-  "5-6":{refran:"El que mucho habla, mucho yerra.",nota:"Problemas causados por malas lenguas. Riesgo de que un hijo se desvíe del buen camino."},
-  "5-7":{refran:"El que debe y paga queda franco.",nota:"No sea luz de la calle y oscuridad de su casa. En tiempos de paz, prepárese para la guerra."},
-  "6-5":{refran:"Para afuera, para el patio: lo que no sirve se bota.",nota:"No mienta, no reniegue, no llore miseria. Cuídese del fuego."},
-  "9-5":{refran:"Si no aprende la ley de aquí, la aprenderá en el mundo.",nota:"No sea tan arriesgado ni tan orgulloso; cuide a un enfermo grave de la familia."},
-  "10-1":{refran:"Al que maldice, lo maldicen.",nota:"Siente que sus cosas se paralizan. No regale sus cosas: más adelante le harán falta. Evite el alcohol."},
-  "1-1":{refran:"La persona que habla demasiado muere por su propia lengua.",nota:"Okana Meyi: confórmese con lo que tiene y tenga todo legalmente claro."},
-};
-
-window.IRE_TIPOS = [
-  {id:"ariku",nombre:"Iré Arikú",desc:"Salud y larga vida"},
-  {id:"owo",nombre:"Iré Owó",desc:"Bienestar económico"},
-  {id:"omo",nombre:"Iré Omó",desc:"Bendición por los hijos"},
-  {id:"ashegun",nombre:"Iré Ashegún Otá",desc:"Vencer a los enemigos"},
-  {id:"aye",nombre:"Iré Ayé",desc:"Bienes de este mundo"},
-  {id:"elese_osha",nombre:"Iré Elese Osha",desc:"Por mediación de los Orishas"},
-  {id:"elese_eggun",nombre:"Iré Elese Eggun",desc:"Por mediación de los muertos"},
-  {id:"deleno",nombre:"Iré Deleno",desc:"Bendición que viene del mar / de lejos"}
-];
-window.OSOGBO_TIPOS = [
-  {id:"iku",nombre:"Ikú",desc:"Muerte"},
-  {id:"ano",nombre:"Anó",desc:"Enfermedad"},
-  {id:"eyo",nombre:"Eyó",desc:"Tragedia"},
-  {id:"ofo",nombre:"Ofó",desc:"Pérdida"},
-  {id:"araye",nombre:"Arayé",desc:"Chismes, pleitos, envidia"},
-  {id:"akoba",nombre:"Akobá",desc:"Sorpresa desagradable"},
-  {id:"ogu",nombre:"Ogú",desc:"Brujería"},
-  {id:"tiyatiya",nombre:"Tiya-tiya",desc:"Discusiones"},
-  {id:"fitibo",nombre:"Fitibó",desc:"Muerte repentina"}
-];
-
-// Base de datos: Ifá — 16 Odu Meji (orden lucumí) + generación de los 240 Omoluos
-// Marcas: 1 = trazo simple (I), 2 = trazo doble (II), de arriba hacia abajo.
-window.IFA_MEJI = [
-{ n:1, nombre:"Baba Ejiogbe", corto:"Ogbe", yoruba:"Èjì Ogbè", marcas:[1,1,1,1], dilo:8,
-  refranes:["La cabeza es la que gobierna el cuerpo.","Ningún sombrero es más famoso que la corona.","Es un error no aprender de los errores.","Solo Orunmila puede cambiar los destinos."],
-  orishas:["Orunmila","Obbatalá","Yemayá","Olokun","Olorun","Eshu-Elegguá"],
-  nace:["El Itá del Santo","La escalera de Ifá, que pone a cada quien en su lugar","La respiración","La dispersión de las lenguas","Los vasos sanguíneos y la linfa","Los ríos"],
-  resumen:"Rey de los Odu y principio de la luz. Habla de cabeza, autoridad y de consultar a Ifá antes de toda decisión importante.",
-  consejos:["Consulte a Ifá antes de cualquier decisión importante.","Modere su carácter; vigile el abandono de pareja.","Ruegue a Yemayá y atienda a su Ángel de la Guarda.","Ponga azucenas a Olorun, huélalas y pida lo que desea cada día.","Si viene osogbo de Ikú, se hace ashinima."],
-  prohibiciones:["No vestir de rayas","No recibir ni llevar recados de noche","No entrar a ninguna casa sin permiso","No jugar al interés","No comer boniato, huevos ni frutas arenosas"],
-  ebbo:["Palomas, gallinas o chivo según el propósito.","Coco, miel, manteca de cacao, maíz tostado, jutía y pescado ahumado.","Agua y arena de río y de mar en una vasija.","Hierbas para baño y velas junto al Orisha que corresponda."],
-  pataki:{titulo:"La cabeza sin cuerpo",texto:"Una cabeza sin cuerpo vendía cocos en la plaza y pedía, a quien los tomara, que primero la ayudara con su problema. Shangó se llevó cocos sin ayudarla y ella lo despidió. Orunmila aceptó ayudarla a cambio de los cocos y le marcó dieciséis días de ofrendas, dándole de comer coco a la cabeza, hasta que le brotó un cuerpo. Agradecida, la cabeza lo llamó padre y Orunmila declaró que Ejiogbe gobernaría el mundo.",ensenanza:"Quien atiende su Orí completa su destino."}},
-{ n:2, nombre:"Oyekun Meji", corto:"Oyekun", yoruba:"Ọ̀yẹ̀kú Méjì", marcas:[2,2,2,2], dilo:2,
-  refranes:["El camino de Ikú nunca se le cierra al perro.","El huevo no puede declararle la guerra a la piedra.","La pequeña capa de agua se convierte en mar.","Los ojos no pueden abandonar la cabeza."],
-  orishas:["Orunmila","Eggun","Ibeyis","Oduduwa","Obbatalá","Eshu","Shangó"],
-  nace:["Ikú y el dar de comer a Ikú y a los Eggun","Los jimaguas","Las abejas","Los cítricos y el mango","La tinta","El manatí"],
-  resumen:"Odu de la noche y de la muerte; madre de los Odu junto a Ejiogbe. Pide ebbó constante y respeto a la familia.",
-  consejos:["Haga ebbó con regularidad para no perder la suerte.","Atienda a los Eggun.","Respete a padres, hijos y hermanos de sangre y de religión.","Siga trabajando aunque llueva.","Use su poder para el bien."],
-  prohibiciones:["No comer cerdo","No beber alcohol","No vestir de rojo","No tener gatos, perros ni animales salvajes en casa","No entrar solo al monte","No vestirse igual que sus amigos"],
-  ebbo:["Gallos, palomas y gallinas negras.","Jutía, pescado ahumado, maíz tostado, quimbombó y manteca de corojo.","Derecho (dinero) según marque Ifá."],
-  pataki:{titulo:"Los árboles que no hicieron ebbó",texto:"Orunmila advirtió a los árboles que venía una desgracia y que hicieran ebbó. La mayoría no le hizo caso; solo tres árboles cumplieron. Llegó una gran tormenta de agua y viento y únicamente sobrevivieron los que habían hecho la ofrenda.",ensenanza:"El ebbó hecho a tiempo es la raíz que aguanta la tormenta."}},
-{ n:3, nombre:"Iwori Meji", corto:"Iwori", yoruba:"Ìwòrì Méjì", marcas:[2,1,1,2], dilo:15,
-  refranes:["El cojo no puede correr y el que tiene una sola moneda no la puede hacer sonar.","Nací, pero ya había vivido en este mundo.","El coral es el símbolo de mi honra."],
-  orishas:["Iroko","Oggún","Oshosi","Obbatalá","Orunmila","Eshu","Shangó","Oshún","Yemayá","Osain","Olokun"],
-  nace:["Los remolinos","El análisis de los hechos y la lógica","Los componentes de la sangre","Los animales feroces y carnívoros"],
-  resumen:"Odu del análisis, la astucia y la reencarnación. Pide no meterse en asuntos ajenos.",
-  consejos:["Consulte a Orunmila al buscar trabajo.","Baños de hierbas (ebbó misí).","Use coral.","Cuelgue una cadena en la puerta."],
-  prohibiciones:["No comer coco, guanábana ni gallo","No ir a cementerios, velorios ni visitar enfermos","No averiguar asuntos ajenos","No botar agua a la calle de día","No recibir visitas de aleyos después de las seis"],
-  ebbo:["Gallos, jutía, pescado ahumado, coco, miel, vela, aguardiente y derecho.","Según el caso: cuchillos, muñecos, flechas o una cazuela de barro."],
-  pataki:{titulo:"Orunmila y el hacendado",texto:"Orunmila se contrató con un hacendado presumiendo que trabajaría más que nadie, pero pasó el día comiendo y sin empezar. El hacendado se quejó al alcalde; Orunmila aprovechó para dar una advertencia urgente sobre una mujer de parto y cobró su consejo. Luego reveló que el hacendado escondía un caballo robado y este le pagó para que callara. Desde entonces Iwori quedó en ese pueblo como adivino.",ensenanza:"La astucia abre puertas que la fuerza no abre."}},
-{ n:4, nombre:"Odi Meji", corto:"Odi", yoruba:"Òdí Méjì", marcas:[1,2,2,1], dilo:7,
-  refranes:["El guerrero de Ifá no va al combate con lanza.","La muerte lo hereda todo en la tierra.","Un río no sale a hacerle la guerra a otro río.","El que calumnia a otro rebaja su propio prestigio."],
-  orishas:["Yemayá","Obbatalá","Eshu","Oduduwa","Oggún","Shangó","Babalú Ayé","Olokun","Oshosi","Eggun","Oshún"],
-  nace:["Los órganos reproductores femeninos","Los mares y los peces de orilla","Los caracoles, el maíz y la calabaza","La raza humana","El tambor grande de Ifá"],
-  resumen:"Odu de Yemayá, la fertilidad y la envidia entre hermanos.",
-  consejos:["Haga sacrificio a Obbatalá al atardecer.","Recibir Babalú Ayé (Azojuano) y Olokun.","Dé de comer al mar y a la tierra.","Atienda a los mayores que lo visiten."],
-  prohibiciones:["No beber alcohol","No saltar huecos","No ir a entierros","No arrancar hierbas sin pagar el derecho a Osain"],
-  ebbo:["Chivo, gallo, gallina, jutía, pescado, frijoles, ñame y un saco con dinero, según el propósito."],
-  pataki:{titulo:"Los tres hermanos",texto:"Dos hermanos envidiaban al menor, Adema, porque era más sabio. Lo tiraron a un pozo y Yemayá lo sacó vivo; luego lo mataron y Oshún le devolvió la vida; lo amarraron a un árbol y Obbatalá lo liberó. Al verlo regresar cubierto de plumas, los hermanos huyeron aterrados y murieron.",ensenanza:"La envidia y la traición se vuelven contra quien las practica."}},
-{ n:5, nombre:"Irosun Meji", corto:"Iroso", yoruba:"Ìrosùn Méjì", marcas:[1,1,2,2], dilo:4,
-  refranes:["Nadie sabe lo que hay en el fondo del mar.","Sin obstáculos no hay triunfos.","La vergüenza es una gran enseñanza.","Sale de la casa y vuelve a la casa."],
-  orishas:["Eshu","Olokun","Shangó","Babalú Ayé","Oduduwa","Osun","Aggayú","Yemayá","Oshún","Oggún","Osain","Obbatalá"],
-  nace:["El ituto","El aserrín (iyé)","El árbol de Osun","Las fosas mortuorias","El cocuyo"],
-  resumen:"Odu de lo oculto y la envidia. Pide misa a los muertos y apoyo en Ifá.",
-  consejos:["Haga ofrendas con regularidad para mantener la protección.","Aplaque a Osun.","Haga misa espiritual cada año y honre a su padre difunto.","Cuidado con fuegos en la cocina."],
-  prohibiciones:["No cargar cuchillo","No ir al cementerio","No beber alcohol","No sentarse en sillas sin fondo","No dejar vivir extraños en su casa","No entrar primero a una casa o cuarto"],
-  ebbo:["Manteca de corojo, cacao, cascarilla, plátanos y cinta roja (ebbó que se lleva a una ceiba).","Carga de Eshu con ikines, ataré, obi, coco, miel, aguardiente, pescado ahumado, arena de mar, tierra de la casa y monedas."],
-  pataki:{titulo:"El precio de la envidia",texto:"Dos soldados servían a un rey: el envidioso recibía la mitad de lo que pedía y su amigo el doble. El rey les ofreció un deseo y el envidioso pidió perder un ojo, para que al amigo le sacaran los dos. Olofin lo castigó haciéndolo gobernar el pueblo de los ciegos, mientras el amigo gobernaba desde el fondo del mar y le cobraba tributo.",ensenanza:"La envidia daña al envidioso y a todos los que lo rodean."}},
-{ n:6, nombre:"Ojuani Meji", corto:"Ojuani", yoruba:"Ọ̀wọ́nrín Méjì", marcas:[2,2,1,1], dilo:11,
-  refranes:["El mal que deseas a otro se refleja en ti.","La guerra no rompe la piedra.","El médico cura a otros, pero no a sí mismo.","El agradecimiento es la memoria del corazón."],
-  orishas:["Oshún","Eshu","Shangó","Oggún","Orunmila","Obbatalá","Oro"],
-  nace:["Los enemigos (arayé) y sus pruebas","La fama y las conquistas","La diplomacia","La fundación de pueblos","El don de curar"],
-  resumen:"Odu de los arayé y de lo que se devuelve: el mal deseado regresa a quien lo desea.",
-  consejos:["Resuelva los conflictos en paz.","Honre a los mayores y a los antepasados.","Escoja bien sus amistades y ambientes.","Consulte a Ifá en momentos decisivos."],
-  prohibiciones:["No comer vísceras","No maltratar a la madre ni a la esposa","No maldecir","No empezar negocios sin preparación"],
-  ebbo:["Pollo a Eshu, hojas de plátano y ataré.","Rogación de cabeza con dos palomas blancas que luego se sueltan en el río."],
-  pataki:{titulo:"El camaleón y el perro",texto:"El camaleón envidiaba los colores del perro y le pidió a Orunmila que lo hiciera superior. Orunmila le advirtió que el mal deseado a otro se vuelve contra uno, pero le dio el poder de cambiar de color. Insatisfecho, el camaleón pidió además un polvo mágico con la condición de no mirar a nadie hasta usarlo; rompió la condición y con su mirada causó la muerte de su propia madre.",ensenanza:"La envidia no se sacia y termina dañando lo que uno más quiere."}},
-{ n:7, nombre:"Obara Meji", corto:"Obara", yoruba:"Ọ̀bàrà Méjì", marcas:[1,2,2,2], dilo:6,
-  refranes:["El ojo del amo engorda el caballo.","Rey muerto, príncipe coronado.","Cuando el loro habla, el hombre calla."],
-  orishas:["Shangó","Oshún","Oduduwa","Oggún","Orunmila","Eshu-Elegguá","Obbatalá","Eggun"],
-  nace:["La sabiduría y la lengua","Las riquezas y el conocimiento de las joyas","Los maestros y las cadenas de enseñanza","Las revelaciones por sueños"],
-  resumen:"Odu de la palabra que salva o destruye, y de la riqueza que hay que vigilar personalmente.",
-  consejos:["Rece de rodillas antes de dar de comer a un Orisha.","Atienda personalmente sus propiedades.","Busque su propio Ifá para conocer su camino.","Busque un lugar estable y paz mental."],
-  prohibiciones:["No beber vino ni alcohol","No repartir la herencia de un difunto","No salir de casa el día que haga ofrenda a un Orisha","No comer conejo","No ser presumido","No matar auras tiñosas"],
-  ebbo:["Gallo blanco y paloma, babosas, tres piedras, agua y arena de río, pescaditos y anzuelos, jutía, pescado ahumado, corojo, miel, aguardiente y derecho."],
-  pataki:{titulo:"El poder de la palabra",texto:"Olofin pidió a Orunmila que cocinara la mejor comida para sus hijos y Orunmila preparó una lengua de res con todo esmero. Luego le pidió la peor comida y Orunmila volvió a servir lengua, esta vez mal sazonada. Le explicó que una buena lengua salva a la gente y una mala la destruye; impresionado, Olofin le entregó el régimen de Ifá.",ensenanza:"La misma lengua puede ser el mejor o el peor plato."}},
-{ n:8, nombre:"Okana Meji", corto:"Okana", yoruba:"Ọ̀kànràn Méjì", marcas:[2,2,2,1], dilo:1,
-  refranes:["El agua no se puede amarrar con una soga.","A veces la felicidad se encuentra en la basura.","Cinco dedos nunca chocan entre sí.","El árbol que cae, cae al pie de su tronco."],
-  orishas:["Eshu-Elegguá","Shangó","Obbatalá","Orunmila","Oyá","Osun","Ibeyis"],
-  nace:["La primera comida de Eshu (gallo)","Las enfermedades contagiosas y la vesícula","El habla humana","Los trillizos","La palma real, único árbol que resiste el viento","El odu Isalaye de Shangó"],
-  resumen:"Odu de orgullo, desengaño e ingratitud. Pide prudencia y control de la lengua.",
-  consejos:["Pida a los Orishas de forma indirecta y no diga a dónde va.","Atienda mucho a Eshu y honre a Shangó.","Calle lo que percibe para conservar la gracia.","Cuidado con las velas y los reptiles.","Evite las bebidas alcohólicas, sobre todo las blancas."],
-  prohibiciones:["No matar hormigas","No gastar en placeres frívolos","No comer gallo ni carne de res poco cocida","No comer frijoles negros ni colorados","No cocinar con carbón","No amarrar cosas"],
-  ebbo:["Ebbó anual para prevenir enfermedades: aves, harina, mariscos, granos y hierbas, presentado a Eshu y sacado de la casa.","Hoja de malanga marcada con el signo, lavada y hecha polvo para soplar en la puerta contra la brujería."],
-  pataki:{titulo:"Oggún pagó doble",texto:"Eshu fue a consultarse con Orunmila sin dinero para pagar y fingió una herida en la cabeza para que lo atendiera. Después le dijo a Oggún que el derecho de Ifá era una carreta llena de dinero, y avisó antes a Orunmila. Oggún terminó pagando el doble por su consulta.",ensenanza:"Quien no pregunta ni verifica, paga de más."}},
-{ n:9, nombre:"Ogunda Meji", corto:"Ogunda", yoruba:"Ògúndá Méjì", marcas:[1,1,1,2], dilo:3,
-  refranes:["El cuchillo corta y desgarra; la sangre corre.","Saber esperar es de sabios.","La guerra llama a la guerra."],
-  orishas:["Orunmila","Shangó","Oggún","Yemayá","Oshún","Obbatalá"],
-  nace:["La cirugía","La ciencia de la guerra y las armas","La cesárea","La presión alta","Las enfermedades venéreas","El okpele"],
-  resumen:"Odu de Oggún: estrategia antes que violencia.",
-  consejos:["Resuelva las disputas con estrategia e inteligencia.","Vigile la presión arterial y la salud sexual.","Haga ofrendas a Oggún para protección.","Desarrolle sus habilidades creativas."],
-  prohibiciones:["No beber alcohol","No comer gallo, ñame, yuca ni langosta","No matar majá","No hacer de la caza su profesión","No cargar con problemas ajenos"],
-  ebbo:["Lámpara a Eggun para problemas de trabajo.","Chivos, gallos y un pescado fresco grande para Oggún o Eshu."],
-  pataki:{titulo:"El nacimiento del okpele",texto:"Un Orisha viajero encontró a su ahijado enfermo de lepra en tierra lejana. Antes de morir, el ahijado le reveló el secreto de una herramienta para consultar a Ifá. Sobre su tumba creció un árbol extraño cuyos frutos traían marcas, y con ellos el padrino supo fabricar el okpele, mensajero de Ifá.",ensenanza:"De la herida nace la herramienta."}},
-{ n:10, nombre:"Osa Meji", corto:"Osa", yoruba:"Ọ̀sá Méjì", marcas:[2,1,1,1], dilo:9,
-  refranes:["El hombre es libre como el pájaro en la jaula.","Pájaros del mismo plumaje vuelan juntos.","Las plumas rojas son el orgullo del loro."],
-  orishas:["Orunmila","Obbatalá","Oyá","Orí","Iyami Oshoronga","Eshu","Shangó","Oduduwa"],
-  nace:["La sinusitis, las adenoides y las amígdalas","Los muslos","El comercio","El saludo entre las personas","El secreto de la canela"],
-  resumen:"Odu de Oyá y de las Iyami: cuidado con la comida ajena y con la vanidad.",
-  consejos:["Consulte a Ifá con regularidad y cumpla lo que marque.","Use gorro rojo en la cabeza.","No se apresure en relaciones ni matrimonio."],
-  prohibiciones:["No ser vanidoso ni arrogante","No comer comida hecha por extraños","No comer aves, maní ni manteca de corojo","No tomar la pareja ajena","No beber en ayunas"],
-  ebbo:["Gallo, paloma, granos y saco de dinero para Eshu (prosperidad).","Dos gallos blancos y un garrote de mariwó para Shangó contra un daño en la comida."],
-  pataki:{titulo:"Las palomas que enfermaron a Shangó",texto:"Shangó enfermó gravemente tras comer una paloma que su enemigo había hechizado. Orunmila le aconsejó no comer de esa procedencia, poner a alguien a probar su comida y hacer ebbó con dos gallos blancos y un garrote de mariwó. El enemigo pisó la ofrenda en el camino y murió; desde entonces el criado fiel de Shangó come las palomas que le mandan.",ensenanza:"No todo lo que llega a su mesa viene con buena intención."}},
-{ n:11, nombre:"Ika Meji", corto:"Ika", yoruba:"Ìká Méjì", marcas:[2,1,2,2], dilo:14,
-  refranes:["Lo que yo digo, Olodumare lo oye.","Si no oigo consejo, no llego a viejo.","Al leopardo nunca le falta el oro en los ojos."],
-  orishas:["Orunmila","Obbatalá","Oyá","Orí","Iyami","Eshu","Shangó","Oduduwa","Naná Burukú"],
-  nace:["La maldad humana","Las anclas y las canoas","Los tejidos","Los muelles","El matrimonio"],
-  resumen:"Odu del matrimonio y de la obediencia a Ifá; la cabeza bien atendida lleva a buena posición.",
-  consejos:["Trate bien a las mujeres; no las ofenda.","Sea obediente con Ifá.","Atienda su cabeza con regularidad.","Dé de comer a todas las aguas.","Reciba Oggún o aliméntelo si ya lo tiene."],
-  prohibiciones:["No poner líquidos ni comida en güiros","No desobedecer a Orunmila","No ser infiel","No saltar huecos","No entrar en cuevas"],
-  ebbo:["Cabezas de jutía y pescado, gallos, palomas blancas, gallina, corojo, maíz tostado, ñame, calabaza, obi y hierbas de Ifá."],
-  pataki:{titulo:"Adimere",texto:"Tres amigos llegaron a un reino nuevo y el rey le puso a uno de ellos, Adimere, una tarea imposible. Orunmila le aconsejó hacer ebbó y apartarse de sus amigos, pero estos lo delataron. El rey lo encerró en una caja y lo tiró al mar; unos pescadores lo rescataron y lo coronaron rey. Adimere perdonó la vida al rey que lo agravió, pero le impuso la misma tarea.",ensenanza:"El ebbó salva incluso de la traición de los amigos."}},
-{ n:12, nombre:"Otrupon Meji", corto:"Otrupon", yoruba:"Òtúúrúpọ̀n Méjì", marcas:[2,2,1,2], dilo:12,
-  refranes:["El que tensa mucho la soga no puede ser agricultor.","La paja seca muere y nace la nueva.","Muere la araña y empiezan sus hijos.","Cuando hay guerra, el soldado no duerme."],
-  orishas:["Orunmila","Olofin","Oshún","Oggún","Shangó","Osain","Eshu-Elegguá","Eggun","Babalú Ayé"],
-  nace:["Los sueños","El útero y el estómago","Las hernias y los tumores","Los peces, los loros y las arañas","La gordura","La mentira piadosa"],
-  resumen:"Odu de la tierra y del vientre; envidia disfrazada.",
-  consejos:["Haga mucho ebbó.","Si se apartó de su padrino, reconcíliese.","Antes de un viaje por mar, ofrende a Olokun.","Ofrezca una paloma para la suerte."],
-  prohibiciones:["No recoger hierbas en el monte","No asistir a centros espirituales","No beber alcohol","No comer papaya, quimbombó, calabaza ni gallo","No maldecir","No ir a velorios ni fiestas"],
-  ebbo:["Chivo blanco a Shangó y dos gallos rojos a Eshu-Elegguá.","Limpieza con dos güiros para males de vientre o pecho, como hizo Oshún."],
-  pataki:{titulo:"El awó y el rey de los monos",texto:"El rey de los monos, celoso de la fama de un adivino, fingió su propia muerte e invitó al adivino al velorio para matarlo. Advertido por Ifá, el adivino hizo ebbó y fue a rezar junto al ataúd. El muerto estornudó, la trampa quedó al descubierto y el adivino escapó mientras los monos se enredaban en su propio caos.",ensenanza:"La trampa envidiosa atrapa a quien la tiende."}},
-{ n:13, nombre:"Otura Meji", corto:"Otura", yoruba:"Òtúrá Méjì", marcas:[1,2,1,1], dilo:16,
-  refranes:["La riqueza no me podrá cegar.","Lo que se quiere de verdad nunca se abandona.","No presumas de tus méritos."],
-  orishas:["Orunmila","Shangó","Oggún","Yemayá","Ibeyis","Olokun","Orisha Oko","Obbatalá"],
-  nace:["La raza humana","La ceguera","La mendicidad","La igualdad","La paternidad","Los pájaros cantores"],
-  resumen:"Odu de la paciencia para gobernar y de la gratitud con quien ayudó.",
-  consejos:["Recibir Olokun y Oduduwa.","Tenga paciencia para gobernar y conseguir lo que quiere.","Agradezca y recuerde a quien lo ayudó.","Dé chivo a Eshu con frecuencia."],
-  prohibiciones:["No comer conejo, gallo, jicotea, cerdo, cangrejo ni pulpo","No fumar ni beber","No teñirse el pelo","No abusar de otros","No vestir ropa rota"],
-  ebbo:["Para cambiar la cabeza de un enfermo: cascarilla, pañuelo blanco, pelo del enfermo, tela blanca, dos gallinas blancas, caracoles y derecho."],
-  pataki:{titulo:"El cangrejo y su cabeza",texto:"Un hombre sin cabeza, pero muy hábil con las manos, le pidió prestada la cabeza a su amigo el cangrejo para ir a la reunión de Olodumare. Con esa cabeza impresionó a todos y fue nombrado líder. Cuando el cangrejo la reclamó, el hombre se negó y lo amenazó; el cangrejo huyó loma abajo, perdió la cabeza y dos piedrecitas le quedaron por ojos.",ensenanza:"Lo prestado se devuelve; la ingratitud deja marcas."}},
-{ n:14, nombre:"Irete Meji", corto:"Irete", yoruba:"Ìrẹtẹ̀ Méjì", marcas:[1,1,2,1], dilo:13,
-  refranes:["El juez que mucho advierte no quiere condenar.","El sol no puede vencer a la sombrilla.","Cuidado con caer en el hueco de la prosperidad."],
-  orishas:["Orunmila","Obbatalá","Oduduwa","Eshu","Olokun","Oyá","Shangó","Oggún","Babalú Ayé"],
-  nace:["El respeto de Ikú por las gallinas","El cuerpo astral o espíritu","El secreto de la corona de Olofin","El pacto entre Ikú y Orunmila"],
-  resumen:"Odu del pacto con la muerte, de la tierra y de Babalú Ayé.",
-  consejos:["Para la mujer, hacer paraldo con urgencia cuando sale este Odu.","Estudie a fondo su profesión.","Ofrende a Oshún para que prosperen los negocios.","Recibir San Lázaro (Babalú Ayé)."],
-  prohibiciones:["No matar hormigas","No beber oti","No vestir de negro ni ropa rota","No ir a plazas ni lugares de reunión","No abrir ni cruzar huecos"],
-  ebbo:["Paraldo con omiero de cinco hierbas de Oshún.","Gallo, gallinas amarillas, velas, pescado ahumado, jutía, telas amarilla, roja y blanca, cocos, arena y piedras de río."],
-  pataki:{titulo:"El canto que salvó a Orunmila",texto:"Cazando, Orunmila cayó en un pozo y cantó pidiendo ayuda. Pasaron tres hombres y lo dejaron allí, pero Oshún, Oyá y Yemayá lo sacaron atando sus paños. En agradecimiento las bendijo con hijos; más tarde reconoció por su canto a su propia hija a punto de ser sacrificada, y desde entonces los Orishas escogieron animales para comer, terminando el sacrificio de personas.",ensenanza:"El canto y la gratitud cambian destinos."}},
-{ n:15, nombre:"Oshe Meji", corto:"Oshe", yoruba:"Ọ̀ṣẹ́ Méjì", marcas:[1,2,1,2], dilo:5,
-  refranes:["Perdiendo también se gana.","No hay mañana que no se convierta en ayer.","La inteligencia vale más que la fuerza.","El que persevera, triunfa."],
-  orishas:["Oshún","Orunmila","Obbatalá","Yemayá","Eshu","Olofin","Oyá","Shangó","Dadá"],
-  nace:["El estancamiento de la sangre","La gangrena","Los instrumentos de cuerda","La formación de la plata"],
-  resumen:"Odu de Oshún: perder para ganar, discreción y buen trato a la mujer.",
-  consejos:["Atienda a Obbatalá.","Dé a Eshu cabeza de pescado.","Trate bien a las mujeres y cuide cómo les habla.","Sea discreto.","Ofrende a Oshún y a Orishanlá por las embarazadas."],
-  prohibiciones:["No cortarse el pelo","No comer carne de majá","No buscar dinero con avaricia"],
-  ebbo:["Chivo capón para Oshún con hojas, jutía, pescado ahumado, maíz tostado y tela blanca.","Gallina, tres cocos, tres palomas, huevo, corojo, maíz, aguardiente, miel y ataré (ebbó de parálisis)."],
-  pataki:{titulo:"Orunmila y el rey luchador",texto:"Orunmila andaba por el mundo sin dinero. Eshu lo animó a retar al rey, campeón de lucha, y le aconsejó dejarse caer al primer golpe. Entonces Eshu le dijo al rey que había ganado y le pidió a cambio carretas de bienes para levantar una maldición sobre el pueblo. Así Orunmila se hizo rico.",ensenanza:"A veces perdiendo también se gana."}},
-{ n:16, nombre:"Ofun Meji", corto:"Ofun", yoruba:"Ọ̀fún Méjì", marcas:[2,1,2,1], dilo:10,
-  refranes:["La muerte nunca está lejos ni cansada.","Los ríos se secan; el mar, nunca.","A la muerte no se le soborna.","La sabiduría es la belleza más fina."],
-  orishas:["Eshu","Oggún","Naná Burukú","Babalú Ayé","Shangó","Oduduwa","Oro","Egungun","Oshún","Orishanlá","Osain","Obbatalá","Oyá"],
-  nace:["La plata y el dinero en papel","El juramento mortuorio","El éter y las galaxias","Los frutos caídos al pie de los árboles"],
-  resumen:"Odu de la blancura de Obbatalá, la sabiduría y la muerte.",
-  consejos:["Escuche consejos y deje la arbitrariedad.","Cuide su memoria.","Sea obediente.","Honre mucho a Oggún."],
-  prohibiciones:["No ser dictador con sus iguales","No soplar velas ni avivar el fuego"],
-  ebbo:["Tela roja y negra, gallo rojo, paloma y gallina (ebbó general).","Agua de mar y gallo blanco junto a Osain (salud)."],
-  pataki:{titulo:"La disputa por el gobierno",texto:"Shangó y Obbatalá discutieron sobre quién gobernaría la tierra y acordaron decidirlo en una pelea con hachas. Obbatalá consultó a Orunmila e hizo ebbó; Oggún y Elegguá debilitaron en secreto el hacha de Shangó. Obbatalá ganó y fue nombrado rey, y Shangó, humillado, maldijo la tierra desde lo alto de una palma.",ensenanza:"La paciencia de la cabeza blanca vence a la fuerza."}}
-];
-
-// Nombres cubanos tradicionales del segundo pie (aproximados; cada casa puede variar)
-window.IFA_SEGUNDO = {1:"Ogbe",2:"Oyekun",3:"Iwori",4:"Odi",5:"Iroso",6:"Ojuani",7:"Obara",8:"Okana",9:"Ogunda",10:"Osa",11:"Ika",12:"Otrupon",13:"Otura",14:"Irete",15:"Oshe",16:"Ofun"};
-
-// Apodos cubanos conocidos de algunos Omoluos
-window.IFA_APODOS = {
- "1-2":"Ogbe Yekun","1-3":"Ogbe Wehe","1-4":"Ogbe Di","1-5":"Ogbe Roso","1-6":"Ogbe Juani","1-7":"Ogbe Bara","1-8":"Ogbe Kana","1-9":"Ogbe Ogunda","1-10":"Ogbe Sa","1-11":"Ogbe Ka","1-12":"Ogbe Tumako","1-13":"Ogbe Tua","1-14":"Ogbe Ate","1-15":"Ogbe She","1-16":"Ogbe Fun",
- "8-1":"Okana Sode","2-8":"Oyekun Peleka","7-9":"Obara Kuña","9-7":"Ogunda Bara","13-2":"Otura Tiku","14-1":"Irete Untelu","16-1":"Ofun Nalbe","10-1":"Osa Lofobeyo","5-1":"Iroso Umbo","3-1":"Iwori Bogbe","4-1":"Odi Ogbe","6-1":"Ojuani Hermoso","11-1":"Ika Bemi","12-1":"Otrupon Bekonwa","15-1":"Oshe Nilogbe","7-1":"Obara Bogbe","9-1":"Ogunda Biode","13-1":"Otura Niko"
-};
-// Notas propias de algunos Omoluos (fuente: tratados públicos)
-window.IFA_NOTAS = {
- "1-8":"Nace el tablero de Ifá (atepón) y sus secretos. No discuta con nadie; no vaya a paseos ni bailes de disfraces.",
- "8-1":"Lucha constante para vencer obstáculos y rivales. Lo que se sabe no se pregunta. Avance en el trabajo tras pruebas fuertes; respeto a Eshu, Oggún y Oshosi.",
- "2-8":"Habla Oshún y Orisha Ajé (riqueza), Olokun y Obbatalá.",
- "9-7":"Deudas con Oggún y con un muerto de la familia. Shangó y Oggún en guerra por Oyá. Hacer ebbó antes de pedir favores o préstamos; cuidar la unión familiar.",
- "8-13":"Nace la formación de la tierra y la maldición de Olofin sobre ella. Prohibido comer melocotón y plátano. Rogación de cabeza con una pollona."
-};
-
-</script>
-<script>
-const D=window.DILOGGUN, M=window.IFA_MEJI, $=s=>document.querySelector(s);
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const dl=n=>D[n-1], mj=n=>M[n-1];
-const S={sys:"dilo",t1:1,t2:2,pol:"ire",tipo:null,R:[1,1,1,1],L:[1,1,1,1],lib:"dilo",ori:null,last:null};
-
-// ---------- Ifá: utilidades ----------
-const findMeji=m=>M.find(x=>x.marcas.join()==m.join());
-function ifaOrden(a,b){ if(a===b) return a; return 16+(a-1)*15+(b<a?b:b-1); }
-function ifaNombre(a,b){
-  if(a===b) return mj(a).nombre;
-  if(a===16&&b===8) return "Ofun Kana";
-  return (window.IFA_APODOS[a+"-"+b]) || (mj(a).corto+" "+window.IFA_SEGUNDO[b]);
-}
-function marksSVG(r,l,size){ // r = derecha (1ª), l = izquierda (2ª); se dibuja izquierda | derecha
-  const w=size||18, rows=[0,1,2,3];
-  const col=(m,x)=>rows.map(i=>m[i]===1?`<rect x="${x+3}" y="${i*6}" width="2" height="4" rx="1"/>`:`<rect x="${x}" y="${i*6}" width="2" height="4" rx="1"/><rect x="${x+6}" y="${i*6}" width="2" height="4" rx="1"/>`).join("");
-  return `<svg width="${w}" height="${w*1.25}" viewBox="0 0 20 23" fill="currentColor" aria-hidden="true">${col(l,0)}${col(r,12)}</svg>`;
-}
-// ---------- Diloggún: utilidades ----------
-function diloNombre(a,b){ if(a===b) return dl(a).nombre+" Meyi"; return dl(a).nombre+" tonti "+dl(b).nombre; }
-const uniq=a=>[...new Set(a)];
-
-// ---------- Construcción del formulario ----------
-function grid(el,key){
-  el.innerHTML=D.map(x=>`<button class="num" data-n="${x.n}" aria-pressed="${S[key]===x.n}"><span class="d">${x.n}</span><span class="t">${esc(x.nombre)}</span></button>`).join("");
-  el.onclick=e=>{const b=e.target.closest(".num"); if(!b) return; S[key]=+b.dataset.n; [...el.children].forEach(c=>c.setAttribute("aria-pressed",c===b)); upLbl();};
-}
-function upLbl(){ $("#lbl1").textContent=dl(S.t1).nombre; $("#lbl2").textContent=dl(S.t2).nombre; }
-function tipos(){
-  const list=S.pol==="ire"?IRE_TIPOS:OSOGBO_TIPOS, cls=S.pol==="ire"?"ire":"oso";
-  $("#tipos").innerHTML=list.map(t=>`<button class="chip ${cls}" data-id="${t.id}" aria-pressed="${S.tipo===t.id}" title="${esc(t.desc)}">${esc(t.nombre)}</button>`).join("");
-}
-$("#tipos").onclick=e=>{const b=e.target.closest(".chip"); if(!b) return; S.tipo=S.tipo===b.dataset.id?null:b.dataset.id; tipos();};
-function setPol(p){S.pol=p;S.tipo=null;$("#pol-ire").setAttribute("aria-pressed",p==="ire");$("#pol-oso").setAttribute("aria-pressed",p==="oso");tipos();}
-$("#pol-ire").onclick=()=>setPol("ire"); $("#pol-oso").onclick=()=>setPol("oso");
-function setSys(s){S.sys=s;$("#sys-dilo").setAttribute("aria-pressed",s==="dilo");$("#sys-ifa").setAttribute("aria-pressed",s==="ifa");
-  $("#form-dilo").style.display=s==="dilo"?"flex":"none";$("#form-ifa").style.display=s==="ifa"?"flex":"none";$("#out").innerHTML="";}
-$("#sys-dilo").onclick=()=>setSys("dilo"); $("#sys-ifa").onclick=()=>setSys("ifa");
-
-function legs(){
-  const draw=(id,arr,side)=>{ $(id).innerHTML=arr.map((m,i)=>`<button class="mark" data-side="${side}" data-i="${i}" aria-label="Marca ${i+1} ${m===1?'simple':'doble'}">${m===1?'<i></i>':'<i></i><i></i>'}</button>`).join(""); $(id).style.display="flex";$(id).style.flexDirection="column";$(id).style.gap="8px"; };
-  draw("#legR",S.R,"R"); draw("#legL",S.L,"L");
-  const r=findMeji(S.R).n,l=findMeji(S.L).n;
-  $("#ifaLive").textContent=ifaNombre(r,l)+" · "+ifaOrden(r,l);
-  $("#selR").value=r; $("#selL").value=l;
-}
-document.addEventListener("click",e=>{const b=e.target.closest(".mark"); if(!b) return; const a=S[b.dataset.side]; a[+b.dataset.i]=a[+b.dataset.i]===1?2:1; legs();});
-const opts=M.map(x=>`<option value="${x.n}">${x.n}. ${esc(x.nombre)}</option>`).join("");
-$("#selR").innerHTML=opts; $("#selL").innerHTML=opts;
-$("#selR").onchange=e=>{S.R=[...mj(+e.target.value).marcas];legs();};
-$("#selL").onchange=e=>{S.L=[...mj(+e.target.value).marcas];legs();};
-
-// ---------- Lecturas ----------
-const tipoTxt=()=>{const l=S.pol==="ire"?IRE_TIPOS:OSOGBO_TIPOS;const t=l.find(x=>x.id===S.tipo);return t?t.nombre+" ("+t.desc.toLowerCase()+")":"";};
-const sec=(t,h)=>`<div class="card"><h3>${t}</h3>${h}</div>`;
-const ul=a=>a&&a.length?`<ul class="l">${a.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:`<div class="note">Sin datos registrados.</div>`;
-const chipsOri=a=>`<div class="chips">${a.map(o=>`<span class="chip ori">${esc(o)}</span>`).join("")}</div>`;
-const patakiHTML=p=>`<div class="pataki"><div class="t">${esc(p.titulo)}</div><div>${esc(p.texto)}</div>${p.ensenanza?`<div class="e">Enseñanza: ${esc(p.ensenanza)}</div>`:""}</div>`;
-
-function lecturaDilo(a,b,pol,tipo){
-  const A=dl(a),B=dl(b),comp=window.DILOGGUN_COMPUESTOS[a+"-"+b],meyi=a===b;
-  const ifaA=A.ifa, ifaB=B.ifa;
-  const refr=(comp?[comp.refran]:[]).concat(A.refranes.slice(0,2)).concat(meyi?[]:B.refranes.slice(0,1));
-  const ori=uniq(A.orishas.concat(B.orishas));
-  const polTxt=pol==="ire"?A.ire:A.osogbo;
-  const big=a>=13||b>=13;
-  return `<div class="result">
-   <div class="hero"><div class="badge">${a}-${b}</div><div><div class="nm">${esc(diloNombre(a,b))}</div>
-   <div class="meta">Equivale en Ifá a ${esc(ifaNombre(ifaA,ifaB))} (Odu ${ifaOrden(ifaA,ifaB)})</div>
-   <span class="pill ${pol==="ire"?"ire":"oso"}">${pol==="ire"?"Iré":"Osogbo"}${tipo?" · "+esc(tipo):""}</span></div></div>
-   ${big?`<div class="warn">Este signo lleva ${a>=13&&b>=13?"dos letras":"una letra"} del 13 al 16. En muchas casas el santero remite al consultado al babalawo.</div>`:""}
-   ${sec("Refranes",refr.length?refr.map(r=>`<p class="refran">${esc(r)}</p>`).join(""):`<div class="note">Refrán por documentar: no encontré una fuente confiable.</div>`)}
-   ${sec("Qué dice",`<p style="margin:0 0 8px">${esc(A.resumen)}</p>${!meyi?`<p style="margin:0 0 8px"><b>${esc(B.nombre)}</b> acompaña: ${esc(B.resumen)}</p>`:""}${comp?`<p style="margin:0">${esc(comp.nota)}</p>`:""}`)}
-   ${sec(pol==="ire"?"En iré":"En osogbo",`<p style="margin:0">${esc(polTxt)}</p>${!meyi?`<p class="note" style="margin:8px 0 0">${esc(B.nombre)} en ${pol==="ire"?"iré":"osogbo"}: ${esc(pol==="ire"?B.ire:B.osogbo)}</p>`:""}`)}
-   ${sec("Orishas que hablan",chipsOri(ori))}
-   ${sec("Consejos y recomendaciones",ul(A.consejos.concat(meyi?[]:B.consejos.slice(0,2))))}
-   ${sec("Prohibiciones",ul(uniq(A.prohibiciones.concat(meyi?[]:B.prohibiciones.slice(0,2)))))}
-   ${sec("Ebbó que señala la tradición",ul(A.ebbo.concat(meyi?[]:B.ebbo.slice(0,1)))+`<div class="note" style="margin-top:8px">El ebbó exacto lo marca el oráculo en la consulta.</div>`)}
-   ${sec("Patakí",patakiHTML(A.pataki)+(meyi?"":`<details style="margin-top:12px"><summary>Patakí de ${esc(B.nombre)}</summary><div style="margin-top:8px">${patakiHTML(B.pataki)}</div></details>`))}
-   ${A.gesto?sec("Al salir la letra",`<p style="margin:0">${esc(A.gesto)}</p>`):""}
-   ${sec("Nace en esta letra",ul(A.nace))}
-  </div>`;
-}
-function lecturaIfa(r,l,pol,tipo){
-  const A=mj(r),B=mj(l),meji=r===l,ord=ifaOrden(r,l),nota=window.IFA_NOTAS[r+"-"+l];
-  const refr=A.refranes.slice(0,meji?4:2).concat(meji?[]:B.refranes.slice(0,1));
-  return `<div class="result">
-   <div class="hero"><div class="badge" style="color:var(--cowrie)">${marksSVG(A.marcas,B.marcas,30)}</div><div><div class="nm">${esc(ifaNombre(r,l))}</div>
-   <div class="meta">Odu ${ord} de 256 · ${meji?"Meji (Ojú Odu)":"Omoluo"} · Diloggún ${A.dilo}-${B.dilo}</div>
-   <span class="pill ${pol==="ire"?"ire":"oso"}">${pol==="ire"?"Iré":"Osogbo"}${tipo?" · "+esc(tipo):""}</span></div></div>
-   ${sec("Refranes",refr.map(x=>`<p class="refran">${esc(x)}</p>`).join(""))}
-   ${nota?sec("Lo propio de este Odu",`<p style="margin:0">${esc(nota)}</p>`):""}
-   ${meji?sec("Qué dice",`<p style="margin:0">${esc(A.resumen)}</p>`):sec("Las dos piernas",`<div class="two"><div class="leg"><b>${esc(A.corto)}</b>Pierna derecha, la que manda. ${esc(A.resumen)}</div><div class="leg"><b>${esc(B.corto)}</b>Pierna izquierda, la que acompaña. ${esc(B.resumen)}</div></div>`)}
-   ${sec("Orishas que se manifiestan",chipsOri(uniq(A.orishas.concat(meji?[]:B.orishas.slice(0,4)))))}
-   ${sec("Recomendaciones",ul(A.consejos.concat(meji?[]:B.consejos.slice(0,2))))}
-   ${sec("Prohibiciones",ul(A.prohibiciones.concat(meji?[]:B.prohibiciones.slice(0,2))))}
-   ${sec("Ebbó que señala la tradición",ul(A.ebbo)+`<div class="note" style="margin-top:8px">El ebbó exacto lo marca el babalawo en el tablero.</div>`)}
-   ${sec("Patakí",patakiHTML(A.pataki)+(meji?"":`<details style="margin-top:12px"><summary>Patakí de ${esc(B.nombre)}</summary><div style="margin-top:8px">${patakiHTML(B.pataki)}</div></details>`))}
-   ${sec("Nace en este Odu",ul(A.nace))}
-  </div>`;
-}
-function acciones(){return `<div class="card" style="display:flex;flex-direction:column;gap:10px"><label for="notas" class="label"><span>Notas del padrino o la madrina</span></label><textarea id="notas" placeholder="Ebbó marcado, Orisha que habló, fecha para volver..."></textarea><div class="row"><button class="btn ghost" id="guardar">Guardar consulta</button><button class="btn ghost" id="copiar">Copiar resumen</button></div></div>`;}
-
-$("#ver").onclick=()=>{
-  const tipo=tipoTxt();
-  let html,rec;
-  if(S.sys==="dilo"){html=lecturaDilo(S.t1,S.t2,S.pol,tipo);rec={sys:"dilo",a:S.t1,b:S.t2,nombre:diloNombre(S.t1,S.t2)};}
-  else{const r=findMeji(S.R).n,l=findMeji(S.L).n;html=lecturaIfa(r,l,S.pol,tipo);rec={sys:"ifa",a:r,b:l,nombre:ifaNombre(r,l)};}
-  Object.assign(rec,{pol:S.pol,tipo,cliente:$("#cliente").value.trim(),fecha:new Date().toISOString()});
-  S.last=rec;
-  $("#out").innerHTML=html+acciones();
-  $("#guardar").onclick=()=>{rec.notas=$("#notas").value.trim();H.unshift({...rec});saveH();renderH();toast("Consulta guardada");};
-  $("#copiar").onclick=async()=>{const t=resumen(rec);try{await navigator.clipboard.writeText(t);toast("Resumen copiado");}catch(e){toast("No se pudo copiar en este navegador");}};
-  $("#out").scrollIntoView({behavior:"smooth",block:"start"});
-};
-function resumen(r){
-  const base=r.sys==="dilo"?dl(r.a):mj(r.a);
-  return `${r.nombre} (${r.sys==="dilo"?"Diloggún "+r.a+"-"+r.b:"Ifá, Odu "+ifaOrden(r.a,r.b)})\n${r.pol==="ire"?"Iré":"Osogbo"}${r.tipo?" · "+r.tipo:""}${r.cliente?"\nConsultado: "+r.cliente:""}\nRefrán: ${base.refranes[0]||"por documentar"}\nConsejo: ${base.consejos[0]}${r.notas?"\nNotas: "+r.notas:""}`;
-}
-
-// ---------- Historial ----------
-let H=[];
-try{H=JSON.parse(localStorage.getItem("odu_hist")||"[]");}catch(e){H=[];}
-if(!H.length) H=[{sys:"dilo",a:5,b:6,nombre:"Oshé tonti Obara",pol:"ire",tipo:"Iré Owó (bienestar económico)",cliente:"Ejemplo · María",fecha:"2026-11-01T15:30:00",notas:"Marcó ponerle a Elegguá ekú, eyá y epó. Volver en 21 días.",ejemplo:true}];
-function saveH(){try{localStorage.setItem("odu_hist",JSON.stringify(H.filter(x=>!x.ejemplo)));}catch(e){}}
-function renderH(){
-  $("#hist").innerHTML=H.length?H.map((r,i)=>`<button class="item" data-h="${i}"><span class="sw" style="background:${r.pol==="ire"?"var(--ire)":"var(--osogbo)"}"></span><span class="n">${r.sys==="dilo"?r.a:marksSVG(mj(r.a).marcas,mj(r.b).marcas,16)}</span><span class="x"><b>${esc(r.nombre)}</b><span>${esc(r.cliente||"Sin nombre")} · ${new Date(r.fecha).toLocaleDateString("es",{day:"numeric",month:"short",year:"numeric"})}</span><span>${esc(r.notas||(r.pol==="ire"?"Iré":"Osogbo"))}</span></span></button>`).join(""):`<div class="empty">Aún no hay consultas guardadas.</div>`;
-}
-$("#hist").onclick=e=>{const b=e.target.closest("[data-h]"); if(!b) return; const r=H[+b.dataset.h];
-  openSheet((r.sys==="dilo"?lecturaDilo(r.a,r.b,r.pol,r.tipo):lecturaIfa(r.a,r.b,r.pol,r.tipo))+(r.notas?sec("Notas",`<p style="margin:0">${esc(r.notas)}</p>`):"")+`<button class="btn ghost" id="borrar" style="margin-top:12px">Borrar esta consulta</button>`);
-  $("#borrar").onclick=()=>{H.splice(+b.dataset.h,1);saveH();renderH();closeSheet();toast("Consulta borrada");};
-};
-
-// ---------- Biblioteca ----------
-const ALL_ORI=uniq(D.flatMap(x=>x.orishas).concat(M.flatMap(x=>x.orishas))).filter(o=>!/Todos/.test(o));
-const TOP_ORI=["Elegguá","Oggún","Oshosi","Obbatalá","Yemayá","Oshún","Shangó","Oyá","Orunmila","Babalú Ayé","Olokun","Eggun"];
-function renderOri(){ $("#orifilter").innerHTML=TOP_ORI.map(o=>`<button class="chip" data-o="${esc(o)}" aria-pressed="${S.ori===o}">${esc(o)}</button>`).join(""); }
-$("#orifilter").onclick=e=>{const b=e.target.closest(".chip"); if(!b) return; S.ori=S.ori===b.dataset.o?null:b.dataset.o; renderOri(); renderLib();};
-const norm=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
-function match(x,q){ if(S.ori&&!x.orishas.some(o=>norm(o).includes(norm(S.ori)))) return false; if(!q) return true;
-  return norm([x.nombre,(x.alias||[]).join(" "),x.refranes.join(" "),x.orishas.join(" "),x.resumen].join(" ")).includes(norm(q)); }
-function renderLib(){
-  const q=$("#q").value.trim();
-  if(S.lib==="dilo"){
-    const r=D.filter(x=>match(x,q));
-    $("#lib").innerHTML=r.length?r.map(x=>`<button class="item" data-d="${x.n}"><span class="sw" style="background:${x.color}"></span><span class="n">${x.n}</span><span class="x"><b>${esc(x.nombre)}</b><span>${esc(x.refranes[0]||"Refrán por documentar")}</span><span>${esc(x.orishas.slice(0,4).join(", "))}</span></span></button>`).join(""):`<div class="empty">Ningún signo coincide. Pruebe con otra palabra.</div>`;
-    $("#omoluos").innerHTML="";
-  } else {
-    const r=M.filter(x=>match(x,q));
-    $("#lib").innerHTML=r.length?r.map(x=>`<button class="item" data-m="${x.n}"><span class="n" style="color:var(--cowrie)">${marksSVG(x.marcas,x.marcas,18)}</span><span class="x"><b>${x.n}. ${esc(x.nombre)}</b><span>${esc(x.refranes[0])}</span><span>Diloggún ${x.dilo}-${x.dilo} · ${esc(x.orishas.slice(0,3).join(", "))}</span></span></button>`).join(""):`<div class="empty">Ningún Odu coincide. Pruebe con otra palabra.</div>`;
-    $("#omoluos").innerHTML=`<div class="card"><h3>Los 240 Omoluos</h3><div class="note" style="margin-bottom:10px">Elija la familia (pierna derecha) para ver sus 15 Omoluos.</div><div class="matrix">${M.map(x=>`<button data-fam="${x.n}"><b>${esc(x.corto)}</b>${x.n}</button>`).join("")}</div><div id="fam" style="margin-top:12px"></div></div>`;
-  }
-}
-$("#q").oninput=renderLib;
-function setLib(l){S.lib=l;$("#lib-dilo").setAttribute("aria-pressed",l==="dilo");$("#lib-ifa").setAttribute("aria-pressed",l==="ifa");renderLib();}
-$("#lib-dilo").onclick=()=>setLib("dilo"); $("#lib-ifa").onclick=()=>setLib("ifa");
-document.addEventListener("click",e=>{
-  const d=e.target.closest("[data-d]"), m=e.target.closest("[data-m]"), f=e.target.closest("[data-fam]"), o=e.target.closest("[data-om]"), c=e.target.closest("[data-dc]");
-  if(d){const x=dl(+d.dataset.d);openSheet(fichaDilo(x));}
-  else if(m){openSheet(lecturaIfa(+m.dataset.m,+m.dataset.m,"ire",""));}
-  else if(f){const a=+f.dataset.fam;$("#fam").innerHTML=`<div class="list">${M.filter(x=>x.n!==a).map(x=>`<button class="item" data-om="${a}-${x.n}"><span class="n" style="color:var(--cowrie)">${marksSVG(mj(a).marcas,x.marcas,16)}</span><span class="x"><b>${esc(ifaNombre(a,x.n))}</b><span>Odu ${ifaOrden(a,x.n)} · Diloggún ${mj(a).dilo}-${x.dilo}</span></span></button>`).join("")}</div>`;}
-  else if(o){const [a,b]=o.dataset.om.split("-").map(Number);openSheet(lecturaIfa(a,b,"ire",""));}
-  else if(c){const [a,b]=c.dataset.dc.split("-").map(Number);openSheet(lecturaDilo(a,b,"ire",""));}
-});
-function fichaDilo(x){
-  return `<div class="result"><div class="hero"><div class="badge">${x.n}</div><div><div class="nm">${esc(x.nombre)}</div><div class="meta">${esc((x.alias||[]).join(" · "))} · Padrino en Ifá: ${esc(mj(x.ifa).nombre)}</div></div></div>
-  ${sec("Refranes",x.refranes.length?x.refranes.map(r=>`<p class="refran">${esc(r)}</p>`).join(""):`<div class="note">Refrán por documentar: no encontré una fuente confiable.</div>`)}
-  ${sec("Qué dice",`<p style="margin:0">${esc(x.resumen)}</p>`)}
-  ${sec("Iré y osogbo",`<p style="margin:0 0 8px"><span class="pill ire">Iré</span><br>${esc(x.ire)}</p><p style="margin:0"><span class="pill oso">Osogbo</span><br>${esc(x.osogbo)}</p>`)}
-  ${sec("Orishas que hablan",chipsOri(x.orishas))}
-  ${sec("Nace",ul(x.nace))}
-  ${sec("Consejos",ul(x.consejos))}
-  ${sec("Prohibiciones",ul(x.prohibiciones))}
-  ${sec("Ebbó",ul(x.ebbo))}
-  ${sec("Patakí",patakiHTML(x.pataki))}
-  ${x.gesto?sec("Al salir la letra",`<p style="margin:0">${esc(x.gesto)}</p>`):""}
-  ${sec("Sus 16 compuestos",`<div class="matrix">${D.map(y=>`<button data-dc="${x.n}-${y.n}"><b>${x.n}-${y.n}</b>${esc(y.nombre)}</button>`).join("")}</div>`)}
-  </div>`;
-}
-
-// ---------- Hoja / navegación ----------
-function openSheet(h){$("#sheetBody").innerHTML=h;$("#sheet").classList.add("on");$("#sheet .body").scrollTop=0;}
-function closeSheet(){$("#sheet").classList.remove("on");}
-$("#closeSheet").onclick=closeSheet; $("#sheet").onclick=e=>{if(e.target.id==="sheet")closeSheet();};
-document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet();});
-const VIEWS=["consulta","signos","hist","info"];
-function go(v){ if(!VIEWS.includes(v)) v="consulta"; VIEWS.forEach(x=>$("#v-"+x).classList.toggle("on",x===v));
-  document.querySelectorAll("nav.tabs button").forEach(t=>{ if(t.dataset.v===v) t.setAttribute("aria-current","page"); else t.removeAttribute("aria-current"); }); window.scrollTo(0,0); }
-document.querySelector("nav.tabs").onclick=e=>{const t=e.target.closest("button"); if(!t) return; location.hash=t.dataset.v; go(t.dataset.v);};
-window.addEventListener("hashchange",()=>go(location.hash.slice(1)));
-let tt; function toast(m){const t=$("#toast");t.textContent=m;t.style.display="block";clearTimeout(tt);tt=setTimeout(()=>t.style.display="none",1800);}
-
-// ---------- Inicio ----------
-$("#equiv").innerHTML=D.map(x=>`<div style="display:flex;justify-content:space-between;gap:8px;font-size:14px;border-bottom:1px solid var(--line);padding:6px 0"><span><b>${x.n}</b> ${esc(x.nombre)}</span><span style="color:var(--muted)">${esc(mj(x.ifa).nombre)}</span></div>`).join("");
-grid($("#g1"),"t1"); grid($("#g2"),"t2"); upLbl(); tipos(); legs(); renderOri(); renderLib(); renderH();
-S.t1=5;S.t2=6; grid($("#g1"),"t1"); grid($("#g2"),"t2"); upLbl(); S.tipo="owo"; tipos();
-$("#cliente").value="";
-$("#ver").click(); window.scrollTo(0,0);
-go(location.hash.slice(1)||"consulta");
-</script>
+<script src="config.js"></script>
+<script src="data.js"></script>
+<script src="vendor/supabase.js"></script>
+<script src="app.js"></script>
 <script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}</script>
 </body>
 </html>
