@@ -83,6 +83,19 @@ const Store = {
     if(q.id){ const {id,owner,fecha,...rest}=q; const {data,error}=await sb.from("consultas").update(rest).eq("id",id).select().single(); if(error) throw error; return data; }
     const {data,error}=await sb.from("consultas").insert(q).select().single(); if(error) throw error; return data;
   },
+  async misObras(){
+    if(!CLOUD) return Demo.get("obras",[]);
+    const {data,error}=await sb.from("obras_propias").select("*").order("creado",{ascending:false}); if(error) return []; return data;
+  },
+  async guardarObra(o){
+    if(!CLOUD){ const l=Demo.get("obras",[]); if(o.id){ const i=l.findIndex(x=>x.id===o.id); l[i]={...l[i],...o}; } else { o={...o,id:uid(),creado:new Date().toISOString()}; l.unshift(o);} Demo.set("obras",l); return o; }
+    if(o.id){ const {id,owner,creado,...rest}=o; const {data,error}=await sb.from("obras_propias").update(rest).eq("id",id).select().single(); if(error) throw error; return data; }
+    const {data,error}=await sb.from("obras_propias").insert(o).select().single(); if(error) throw error; return data;
+  },
+  async borrarObra(id){
+    if(!CLOUD){ Demo.set("obras",Demo.get("obras",[]).filter(x=>x.id!==id)); return; }
+    const {error}=await sb.from("obras_propias").delete().eq("id",id); if(error) throw error;
+  },
   async esAdmin(){ if(!CLOUD) return false; const {data,error}=await sb.rpc("soy_admin"); return !error && data===true; },
   async adminUsuarios(){ const {data,error}=await sb.rpc("admin_usuarios"); if(error) throw error; return data; },
   async adminResumen(){ const {data,error}=await sb.rpc("admin_resumen"); if(error) throw error; return data; },
@@ -96,8 +109,8 @@ const S = { sys:"dilo", t1:5, t2:6, pol:"ire", tipo:null, R:[1,1,1,1], L:[1,1,1,
             perfil:{}, gente:[], consultas:[], view:"inicio" };
 async function recargar(){
   try{
-    const [p,g,c]=await Promise.all([Store.perfil(),Store.consultados(),Store.consultas()]);
-    S.perfil=p; S.gente=g; S.consultas=c;
+    const [p,g,c,o]=await Promise.all([Store.perfil(),Store.consultados(),Store.consultas(),Store.misObras()]);
+    S.perfil=p; S.gente=g; S.consultas=c; S.misObras=o||[];
   }catch(e){ toast("No se pudieron cargar tus datos: "+(e.message||e)); }
   pintarTodo();
 }
@@ -119,6 +132,72 @@ function marksSVG(r,l,size){
 const diloNombre = (a,b) => a===b ? dl(a).nombre+" Meyi" : dl(a).nombre+" tonti "+dl(b).nombre;
 const signoDe = (sis,a,b) => sis==="dilo" ? diloNombre(a,b) : ifaNombre(a,b);
 const tipoTxt = () => { const l=S.pol==="ire"?IRE_TIPOS:OSOGBO_TIPOS; const t=l.find(x=>x.id===S.tipo); return t?t.nombre+" ("+t.desc.toLowerCase()+")":""; };
+
+/* ===================== OBRAS ===================== */
+const ORI_ALIAS=o=>{ const n=String(o||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+  if(/eshu|elegg?u?a|elegba|eleggua/.test(n)) return "elegua"; if(/ob+atala|orishanla|orisha-nla/.test(n)) return "obatala";
+  if(/og+un/.test(n)) return "ogun"; if(/o[sc]hosi/.test(n)) return "oshosi"; if(/shango|chango/.test(n)) return "shango";
+  if(/^oya/.test(n)) return "oya"; if(/o[sc]hun/.test(n)) return "oshun"; if(/babalu|azojuano|sankpana|lazaro/.test(n)) return "babalu";
+  if(/oduduwa|oddua/.test(n)) return "oduduwa"; if(/osain|osanyin|ozain/.test(n)) return "osain"; if(/yemay|yemaj/.test(n)) return "yemaya";
+  return n; };
+const todasObras=()=>(S.misObras||[]).map(o=>({...o,propia:true,objetivos:o.objetivos||[],materiales:o.materiales||[]})).concat(window.OBRAS||[]);
+function tipoIdDe(txt){ if(!txt) return null; const t=[...IRE_TIPOS,...OSOGBO_TIPOS].find(x=>txt.startsWith(x.nombre)); return t?t.id:null; }
+function obrasSugeridas(orishas,pol,tipoTxt){
+  const tid=tipoIdDe(tipoTxt);
+  const obj=tid?window.OBRA_POR_TIPO[tid]:(pol==="ire"?["ofrenda","suerte","caminos","dinero"]:["limpieza","proteccion","caminos"]);
+  const oris=uniq(orishas.map(ORI_ALIAS));
+  const sc=o=>{ const i=oris.indexOf(ORI_ALIAS(o.orisha)); if(i<0) return -1; const hit=o.objetivos.filter(x=>obj.includes(x)).length; if(!hit) return -1; return (o.propia?100:0)+hit*10-i; };
+  return todasObras().map(o=>[sc(o),o]).filter(x=>x[0]>=0).sort((a,b)=>b[0]-a[0]).slice(0,4).map(x=>x[1]);
+}
+function obrasHTML(orishas,pol,tipoTxt){
+  const l=obrasSugeridas(orishas,pol,tipoTxt);
+  if(!l.length) return "";
+  return sec("Obras sugeridas",`<div class="list">${l.map(itemObra).join("")}</div><div class="note" style="margin-top:8px">Según los Orishas que hablan y el ${pol==="ire"?"iré":"osogbo"}${tipoTxt?" marcado":""}. Antes de hacer cualquier obra, pregúntele al oráculo si la acepta.</div>`);
+}
+const caminosDe=key=>(window.CAMINOS_OSHUN||[]).filter(c=>c.dilo===key);
+function caminosHTML(lista){ if(!lista.length) return ""; return sec("Caminos de Oshún que nacen aquí",`<ul class="l">${lista.map(c=>`<li><b>Oshún ${esc(c.camino)}</b> (${esc(c.signo)}): ${esc(c.rasgo)}</li>`).join("")}</ul><div class="note" style="margin-top:8px">Fuente: «236 obras con Oshún». El signo de cada camino varía entre casas.</div>`); }
+function itemObra(o){ const obj=(o.objetivos||[]).map(x=>window.OBRA_OBJETIVOS[x]||x).slice(0,2).join(" · ");
+  return `<button class="item" data-ob="${esc(o.id)}"><span class="n" style="font-size:13px">${esc((o.orisha||"?").slice(0,3))}</span><span class="x"><b>${esc(o.titulo)}</b><span>${esc(o.tipo||"Obra")} · ${esc(o.orisha||"")}${o.propia?" · Mi obra":""}</span><span>${esc(obj)}</span></span>${o.requiereOsha?'<span class="r"><span class="pill gold">Sacerdote</span></span>':""}</button>`; }
+function fichaObra(o){
+  const obj=(o.objetivos||[]).map(x=>`<span class="chip ori">${esc(window.OBRA_OBJETIVOS[x]||x)}</span>`).join("");
+  return `<div class="hero"><div class="badge" style="font-size:15px">${esc((o.orisha||"?").slice(0,4))}</div><div><div class="nm">${esc(o.titulo)}</div><div class="meta">${esc(o.tipo||"Obra")} · ${esc(o.orisha||"")}${o.propia?" · Mi obra":""}</div></div></div>
+   ${o.requiereOsha?`<div class="warn" style="margin-top:12px">Esta obra la marca el oráculo y la hace un olorisha o babalawo: lleva sacrificio, trabajo con el fundamento o preparación de un resguardo.</div>`:""}
+   <div class="card" style="margin-top:12px"><h3>Para qué</h3><div class="chips">${obj||'<span class="note">Sin objetivo indicado</span>'}</div></div>
+   <div class="card" style="margin-top:12px"><h3>Materiales</h3>${ul(o.materiales)}</div>
+   <div class="card" style="margin-top:12px"><h3>Cómo se hace</h3><p style="margin:0;white-space:pre-line">${esc(o.pasos||"")}</p>${o.entrega?`<p style="margin:10px 0 0"><b>Entrega:</b> ${esc(o.entrega)}</p>`:""}</div>
+   ${o.nota?`<div class="card" style="margin-top:12px"><h3>Nota</h3><p style="margin:0">${esc(o.nota)}</p></div>`:""}
+   <div class="note" style="margin-top:12px">${o.propia?"Obra registrada por ti; solo tú la ves.":"Fuente: "+esc(o.fuente||"")+". Redactada de nuevo."} Toda obra se pregunta antes al oráculo: el Orisha dice si la acepta, cuántos días y dónde se entrega.</div>
+   ${o.propia?`<div class="row" style="margin-top:12px"><button class="btn ghost" id="editObra">Editar</button><button class="btn ghost" id="borrarObra">Borrar</button></div>`:""}`;
+}
+function abrirObra(id){ const o=todasObras().find(x=>x.id===id); if(!o) return; openSheet(fichaObra(o));
+  if(o.propia){ $("#editObra").onclick=()=>formObra(o); confirmar("#borrarObra","¿Borrar esta obra? Toca otra vez para confirmar.",async()=>{ await Store.borrarObra(o.id); toast("Obra borrada"); closeSheet(); await recargar(); renderLib(); }); } }
+const ORI_LISTA=["Elegguá","Oggún","Oshosi","Obbatalá","Yemayá","Oshún","Shangó","Oyá","Orunmila","Babalú Ayé","Olokun","Oduduwa","Osain","Aggayú","Eggun"];
+function formObra(o){ o=o||{};
+  openSheet(`<h2 style="margin-top:0">${o.id?"Editar obra":"Nueva obra de mi casa"}</h2>
+   <form class="stack" id="obraForm" style="margin-top:12px">
+    <label class="f">Nombre de la obra *<input type="text" id="w-tit" value="${esc(o.titulo||"")}"></label>
+    <div class="row"><label class="f">Orisha<select id="w-ori">${ORI_LISTA.map(x=>`<option ${o.orisha===x?"selected":""}>${x}</option>`).join("")}</select></label>
+    <label class="f">Tipo<input type="text" id="w-tipo" value="${esc(o.tipo||"")}" placeholder="Addimú, baño, lámpara…"></label></div>
+    <div><div class="label"><span>Para qué sirve</span></div><div class="chips" id="w-obj">${Object.entries(window.OBRA_OBJETIVOS).map(([k,v])=>`<button type="button" class="chip ire" data-k="${k}" aria-pressed="${(o.objetivos||[]).includes(k)}">${v}</button>`).join("")}</div></div>
+    <label class="f">Materiales (uno por línea)<textarea id="w-mat">${esc((o.materiales||[]).join("\n"))}</textarea></label>
+    <label class="f">Cómo se hace<textarea id="w-pasos" style="min-height:110px">${esc(o.pasos||"")}</textarea></label>
+    <label class="f">Entrega<input type="text" id="w-ent" value="${esc(o.entrega||"")}" placeholder="Río, monte, cuatro caminos…"></label>
+    <label class="check"><input type="checkbox" id="w-osha" ${o.requiereOsha?"checked":""}> Solo la hace un sacerdote</label>
+    <div id="w-msg"></div>
+    <button class="btn" type="submit">${o.id?"Guardar cambios":"Guardar obra"}</button>
+   </form>`);
+  $("#w-obj").onclick=e=>{ const b=e.target.closest(".chip"); if(b) b.setAttribute("aria-pressed",b.getAttribute("aria-pressed")!=="true"); };
+  $("#obraForm").onsubmit=async ev=>{ ev.preventDefault(); const t=$("#w-tit").value.trim(); if(!t){ $("#w-msg").innerHTML=`<div class="err">Escribe el nombre de la obra.</div>`; return; }
+    const ob={titulo:t,orisha:$("#w-ori").value,tipo:$("#w-tipo").value.trim()||null,objetivos:[...document.querySelectorAll("#w-obj .chip[aria-pressed=true]")].map(b=>b.dataset.k),
+      materiales:$("#w-mat").value.split("\n").map(x=>x.trim()).filter(Boolean),pasos:$("#w-pasos").value.trim()||null,entrega:$("#w-ent").value.trim()||null,requiereOsha:$("#w-osha").checked};
+    if(o.id) ob.id=o.id;
+    try{ await Store.guardarObra(ob); toast(o.id?"Obra actualizada":"Obra guardada"); closeSheet(); await recargar(); setLib("obras"); }
+    catch(e){ $("#w-msg").innerHTML=`<div class="err">No se pudo guardar: ${esc(e.message||e)}</div>`; } };
+}
+S.obj=null;
+function renderObjFilter(){ $("#objfilter").innerHTML=Object.entries(window.OBRA_OBJETIVOS).map(([k,v])=>`<button class="chip" data-obj="${k}" aria-pressed="${S.obj===k}">${esc(v)}</button>`).join(""); }
+$("#objfilter").onclick=e=>{ const b=e.target.closest("[data-obj]"); if(!b) return; S.obj=S.obj===b.dataset.obj?null:b.dataset.obj; renderObjFilter(); renderLib(); };
+$("#nuevaObra").onclick=()=>formObra(null);
 
 /* ===================== LECTURAS ===================== */
 const sec=(t,h)=>`<div class="card"><h3>${t}</h3>${h}</div>`;
@@ -144,6 +223,8 @@ function lecturaDilo(a,b,pol,tipo){
    ${sec("Prohibiciones",ul(uniq(A.prohibiciones.concat(meyi?[]:B.prohibiciones.slice(0,2)))))}
    ${sec("Ebbó que señala la tradición",ul(A.ebbo.concat(meyi?[]:B.ebbo.slice(0,1)))+`<div class="note" style="margin-top:8px">El ebbó exacto lo marca el oráculo en la consulta.</div>`)}
    ${sec("Patakí",patakiHTML(A.pataki)+(meyi?"":`<details style="margin-top:12px"><summary>Patakí de ${esc(B.nombre)}</summary><div style="margin-top:8px">${patakiHTML(B.pataki)}</div></details>`))}
+   ${obrasHTML(uniq(A.orishas.concat(B.orishas)),pol,tipo)}
+   ${caminosHTML(caminosDe(a+"-"+b))}
    ${A.gesto?sec("Al salir la letra",`<p style="margin:0">${esc(A.gesto)}</p>`):""}
    ${sec("Nace en esta letra",ul(A.nace))}
   </div>`;
@@ -163,6 +244,8 @@ function lecturaIfa(r,l,pol,tipo){
    ${sec("Prohibiciones",ul(A.prohibiciones.concat(meji?[]:B.prohibiciones.slice(0,2))))}
    ${sec("Ebbó que señala la tradición",ul(A.ebbo)+`<div class="note" style="margin-top:8px">El ebbó exacto lo marca el babalawo en el tablero.</div>`)}
    ${sec("Patakí",patakiHTML(A.pataki)+(meji?"":`<details style="margin-top:12px"><summary>Patakí de ${esc(B.nombre)}</summary><div style="margin-top:8px">${patakiHTML(B.pataki)}</div></details>`))}
+   ${obrasHTML(uniq(A.orishas.concat(meji?[]:B.orishas)),pol,tipo)}
+   ${caminosHTML(caminosDe(A.dilo+"-"+B.dilo))}
    ${sec("Nace en este Odu",ul(A.nace))}
   </div>`;
 }
@@ -342,6 +425,15 @@ function match(x,q){ if(S.ori&&!x.orishas.some(o=>norm(o).includes(norm(S.ori)))
   return norm([x.nombre,(x.alias||[]).join(" "),x.refranes.join(" "),x.orishas.join(" "),x.resumen].join(" ")).includes(norm(q)); }
 function renderLib(){
   const q=$("#q").value.trim();
+  $("#objfilter").hidden=S.lib!=="obras"; $("#obrasBar").hidden=S.lib!=="obras";
+  $("#q").placeholder=S.lib==="obras"?"Buscar obra, material u Orisha":"Buscar signo, refrán u Orisha";
+  if(S.lib==="obras"){
+    const nq=norm(q); const l=todasObras().filter(o=>(!S.ori||ORI_ALIAS(o.orisha)===ORI_ALIAS(S.ori))&&(!S.obj||(o.objetivos||[]).includes(S.obj))&&(!nq||norm([o.titulo,o.orisha,o.tipo,(o.materiales||[]).join(" "),o.pasos].join(" ")).includes(nq)));
+    $("#obrasCount").textContent=l.length+" obra"+(l.length===1?"":"s");
+    $("#lib").innerHTML=l.length?l.map(itemObra).join(""):`<div class="empty">Ninguna obra coincide. Quita algún filtro o agrega la tuya con «+ Mi obra».</div>`;
+    $("#omoluos").innerHTML=`<div class="note">Se excluyeron a propósito los amarres y los trabajos para dañar, dominar o separar a otras personas.</div>`;
+    return;
+  }
   if(S.lib==="dilo"){
     const r=D.filter(x=>match(x,q));
     $("#lib").innerHTML=r.length?r.map(x=>`<button class="item" data-d="${x.n}"><span class="sw" style="background:${x.color}"></span><span class="n">${x.n}</span><span class="x"><b>${esc(x.nombre)}</b><span>${esc(x.refranes[0]||"Refrán por documentar")}</span><span>${esc(x.orishas.slice(0,4).join(", "))}</span></span></button>`).join(""):`<div class="empty">Ningún signo coincide. Pruebe con otra palabra.</div>`;
@@ -353,8 +445,8 @@ function renderLib(){
   }
 }
 $("#q").oninput=renderLib;
-function setLib(l){S.lib=l;$("#lib-dilo").setAttribute("aria-pressed",l==="dilo");$("#lib-ifa").setAttribute("aria-pressed",l==="ifa");renderLib();}
-$("#lib-dilo").onclick=()=>setLib("dilo"); $("#lib-ifa").onclick=()=>setLib("ifa");
+function setLib(l){S.lib=l;["dilo","ifa","obras"].forEach(k=>$("#lib-"+k).setAttribute("aria-pressed",l===k));renderLib();}
+$("#lib-dilo").onclick=()=>setLib("dilo"); $("#lib-ifa").onclick=()=>setLib("ifa"); $("#lib-obras").onclick=()=>{ renderObjFilter(); setLib("obras"); };
 function fichaDilo(x){
   return `<div class="result"><div class="hero"><div class="badge">${x.n}</div><div><div class="nm">${esc(x.nombre)}</div><div class="meta">${esc((x.alias||[]).join(" · "))} · Padrino en Ifá: ${esc(mj(x.ifa).nombre)}</div></div></div>
   ${sec("Refranes",refranesHTML(x.refranes))}
@@ -367,6 +459,7 @@ function fichaDilo(x){
   ${sec("Ebbó",ul(x.ebbo))}
   ${sec("Patakí",patakiHTML(x.pataki))}
   ${x.gesto?sec("Al salir la letra",`<p style="margin:0">${esc(x.gesto)}</p>`):""}
+  ${caminosHTML((window.CAMINOS_OSHUN||[]).filter(c=>c.dilo&&c.dilo.split("-")[0]===String(x.n)))}
   ${sec("Sus 16 compuestos",`<div class="matrix">${D.map(y=>`<button data-dc="${x.n}-${y.n}"><b>${x.n}-${y.n}</b>${esc(y.nombre)}</button>`).join("")}</div>`)}
   </div>`;
 }
@@ -459,6 +552,7 @@ document.querySelector("nav.tabs").onclick=e=>{const t=e.target.closest("button"
 window.addEventListener("hashchange",()=>go(location.hash.slice(1)));
 document.addEventListener("click",e=>{
   const goB=e.target.closest("[data-go]"); if(goB){ go(goB.dataset.go); return; }
+  const ob=e.target.closest("[data-ob]"); if(ob){ abrirObra(ob.dataset.ob); return; }
   const q=e.target.closest("[data-q]"); if(q){ abrirConsulta(q.dataset.q); return; }
   const g=e.target.closest("[data-g]"); if(g){ abrirPersona(g.dataset.g); return; }
   const d=e.target.closest("[data-d]"); if(d){ openSheet(fichaDilo(dl(+d.dataset.d))); return; }

@@ -52,6 +52,7 @@ h3{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)
 .row>*{flex:1}
 .between{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .seg{display:grid;grid-template-columns:1fr 1fr;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:4px;gap:4px}
+.seg.seg3{grid-template-columns:1fr 1fr 1fr}
 .seg button{border:0;background:transparent;padding:10px;border-radius:9px;font-weight:600;color:var(--muted)}
 .seg button[aria-pressed="true"]{background:var(--panel2);color:var(--cowrie);box-shadow:inset 0 0 0 1px var(--line)}
 .label{font-size:13px;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
@@ -256,16 +257,19 @@ nav.tabs button[aria-current="page"]{color:var(--gold)}
 
     <!-- SIGNOS -->
     <section class="view" id="v-signos" aria-label="Signos">
-      <h2>Biblioteca de signos</h2>
-      <div class="seg" role="group" aria-label="Biblioteca">
-        <button id="lib-dilo" aria-pressed="true">Diloggún · 16</button>
-        <button id="lib-ifa" aria-pressed="false">Ifá · 256</button>
+      <h2>Signos y obras</h2>
+      <div class="seg seg3" role="group" aria-label="Biblioteca">
+        <button id="lib-dilo" aria-pressed="true">Diloggún</button>
+        <button id="lib-ifa" aria-pressed="false">Ifá</button>
+        <button id="lib-obras" aria-pressed="false">Obras</button>
       </div>
       <div class="search">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
         <input type="search" id="q" placeholder="Buscar signo, refrán u Orisha" aria-label="Buscar signo">
       </div>
       <div class="chips" id="orifilter"></div>
+      <div class="chips" id="objfilter" hidden></div>
+      <div class="between" id="obrasBar" hidden><span class="note" id="obrasCount"></span><button class="btn small" id="nuevaObra">+ Mi obra</button></div>
       <div class="list" id="lib"></div>
       <div id="omoluos"></div>
     </section>
@@ -356,6 +360,7 @@ nav.tabs button[aria-current="page"]{color:var(--gold)}
 
 <script src="config.js"></script>
 <script src="data.js"></script>
+<script src="data_obras.js"></script>
 <script src="vendor/supabase.js"></script>
 <script src="app.js"></script>
 <script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}</script>
