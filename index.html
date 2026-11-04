@@ -162,6 +162,15 @@ nav.tabs button[aria-current="page"]{color:var(--gold)}
 dialog.pop{border:1px solid var(--line);border-radius:18px;background:var(--ink);color:inherit;padding:0;width:min(520px,94vw);max-height:86vh}
 dialog.pop::backdrop{background:rgba(0,0,0,.6)}
 .popin{padding:16px;max-height:86vh;overflow:auto;box-sizing:border-box}
+.mano{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:var(--panel2)}
+.mano b{font-size:20px;color:var(--gold);letter-spacing:.02em}
+.rezo{font-style:italic;color:var(--cowrie);font-size:14px;margin-top:8px}
+.anrow{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;color:var(--muted)}
+.ansec{display:flex;flex-direction:column;gap:6px}
+.ansec .hd{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;color:var(--muted)}
+input.let{width:64px;text-align:center;padding:7px 6px;font-size:15px}
+.chip.big{padding:9px 14px;font-size:14px}
+.linea{font-family:ui-monospace,Menlo,monospace;font-size:13.5px;line-height:1.5;background:var(--panel2);border:1px dashed var(--line);border-radius:12px;padding:10px 12px;white-space:pre-wrap}
 </style>
 </head>
 <body>
@@ -226,6 +235,7 @@ dialog.pop::backdrop{background:rgba(0,0,0,.6)}
       <div id="form-dilo" class="card stack">
         <div><div class="label"><span>1ª tirada · caracoles boca arriba</span><b id="lbl1">—</b></div><div class="grid16" id="g1"></div></div>
         <div><div class="label"><span>2ª tirada</span><b id="lbl2">—</b></div><div class="grid16" id="g2"></div></div>
+        <div id="dilo-info"></div>
       </div>
       <div id="form-ifa" class="card stack" hidden>
         <div class="label"><span>Toque cada marca para cambiar entre I y II</span></div>
@@ -243,7 +253,9 @@ dialog.pop::backdrop{background:rgba(0,0,0,.6)}
           <button class="o" id="pol-oso" aria-pressed="false">Osogbo<small>Viene con mal</small></button>
         </div>
         <div class="chips" id="tipos"></div>
+        <div class="anrow"><span>Letra que respondió</span><input class="let" id="l-pol" inputmode="decimal" placeholder="—" aria-label="Letra del iré u osogbo"></div>
       </div>
+      <div class="card stack" id="anota"></div>
       <button class="btn" id="ver">Ver lectura del signo</button>
       <div id="out"></div>
     </section>
@@ -363,6 +375,7 @@ dialog.pop::backdrop{background:rgba(0,0,0,.6)}
 
 <script src="config.js"></script>
 <script src="data.js"></script>
+<script src="data_consulta.js"></script>
 <script src="data_obras.js"></script>
 <script src="vendor/supabase.js"></script>
 <script src="app.js"></script>

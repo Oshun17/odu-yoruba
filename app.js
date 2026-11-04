@@ -309,16 +309,16 @@ function grid(el,key){
   el.innerHTML=D.map(x=>`<button type="button" class="num" data-n="${x.n}" aria-pressed="${S[key]===x.n}"><span class="d">${x.n}</span><span class="t">${esc(x.nombre)}</span></button>`).join("");
   el.onclick=e=>{const b=e.target.closest(".num"); if(!b) return; S[key]=+b.dataset.n; [...el.children].forEach(c=>c.setAttribute("aria-pressed",c===b)); upLbl();};
 }
-function upLbl(){ $("#lbl1").textContent=dl(S.t1).nombre; $("#lbl2").textContent=dl(S.t2).nombre; }
+function upLbl(){ $("#lbl1").textContent=dl(S.t1).nombre; $("#lbl2").textContent=dl(S.t2).nombre; if(typeof pintarDiloInfo==="function"){ pintarDiloInfo(); refrescarLinea(); } }
 function tipos(){
   const list=S.pol==="ire"?IRE_TIPOS:OSOGBO_TIPOS, cls=S.pol==="ire"?"ire":"oso";
   $("#tipos").innerHTML=list.map(t=>`<button type="button" class="chip ${cls}" data-id="${t.id}" aria-pressed="${S.tipo===t.id}" title="${esc(t.desc)}">${esc(t.nombre)}</button>`).join("");
 }
-$("#tipos").onclick=e=>{const b=e.target.closest(".chip"); if(!b) return; S.tipo=S.tipo===b.dataset.id?null:b.dataset.id; tipos();};
-function setPol(p){S.pol=p;S.tipo=null;$("#pol-ire").setAttribute("aria-pressed",p==="ire");$("#pol-oso").setAttribute("aria-pressed",p==="osogbo");tipos();}
+$("#tipos").onclick=e=>{const b=e.target.closest(".chip"); if(!b) return; S.tipo=S.tipo===b.dataset.id?null:b.dataset.id; tipos(); refrescarLinea();};
+function setPol(p){S.pol=p;S.tipo=null;$("#pol-ire").setAttribute("aria-pressed",p==="ire");$("#pol-oso").setAttribute("aria-pressed",p==="osogbo");tipos(); if(typeof pintarAnota==="function"){ S.an.yale=null;S.an.yale_con=[];S.an.intori=null;S.an.ebuarda=null; pintarAnota(); }}
 $("#pol-ire").onclick=()=>setPol("ire"); $("#pol-oso").onclick=()=>setPol("osogbo");
 function setSys(s){S.sys=s;$("#sys-dilo").setAttribute("aria-pressed",s==="dilo");$("#sys-ifa").setAttribute("aria-pressed",s==="ifa");
-  $("#form-dilo").hidden=s!=="dilo";$("#form-ifa").hidden=s!=="ifa";$("#out").innerHTML="";}
+  $("#form-dilo").hidden=s!=="dilo";$("#form-ifa").hidden=s!=="ifa";$("#out").innerHTML=""; if(typeof refrescarLinea==="function") refrescarLinea();}
 $("#sys-dilo").onclick=()=>setSys("dilo"); $("#sys-ifa").onclick=()=>setSys("ifa");
 function legs(){
   const draw=(id,arr,side)=>{ $(id).innerHTML=arr.map((m,i)=>`<button type="button" class="mark" data-side="${side}" data-i="${i}" aria-label="Marca ${i+1} ${m===1?'simple':'doble'}">${m===1?'<i></i>':'<i></i><i></i>'}</button>`).join(""); };
@@ -326,6 +326,7 @@ function legs(){
   const r=findMeji(S.R).n,l=findMeji(S.L).n;
   $("#ifaLive").textContent=ifaNombre(r,l)+" · Odu "+ifaOrden(r,l);
   $("#selR").value=r; $("#selL").value=l;
+  if(typeof refrescarLinea==="function") refrescarLinea();
 }
 document.addEventListener("click",e=>{const b=e.target.closest(".mark"); if(!b) return; const a=S[b.dataset.side]; a[+b.dataset.i]=a[+b.dataset.i]===1?2:1; legs();});
 const opts=M.map(x=>`<option value="${x.n}">${x.n}. ${esc(x.nombre)}</option>`).join("");
@@ -352,17 +353,78 @@ function formGuardar(q){
 $("#ver").onclick=()=>{
   let a,b; if(S.sys==="dilo"){a=S.t1;b=S.t2;} else {a=findMeji(S.R).n;b=findMeji(S.L).n;}
   const q={sistema:S.sys,pie1:a,pie2:b,signo:signoDe(S.sys,a,b),orientacion:S.pol,tipo:tipoTxt()};
-  $("#out").innerHTML=lectura(q)+formGuardar(q);
+  $("#out").innerHTML=(tieneAnota(S.an)?`<div class="linea" style="margin-bottom:12px">${esc(detalleActual().linea)}</div>`:"")+lectura(q)+formGuardar(q);
   const selG=[]; wireSelectorObras("g",selG);
   $("#guardarForm").onsubmit=async ev=>{
     ev.preventDefault(); const btn=ev.target.querySelector("button[type=submit]"); btn.disabled=true;
     const cid=$("#c-quien").value||null;
-    const nuevo={...q,consultado_id:cid,pregunta:$("#c-pregunta").value.trim()||null,ebbo:$("#g-ebbo").value.trim()||null,notas:$("#g-notas").value.trim()||null,volver_el:$("#g-volver").value||null,ebbo_hecho:false,obras:selG};
-    try{ await Store.guardarConsulta(nuevo); toast("Consulta guardada"); $("#out").innerHTML=""; $("#c-pregunta").value=""; await recargar(); go("inicio"); }
+    const nuevo={...q,consultado_id:cid,pregunta:$("#c-pregunta").value.trim()||null,ebbo:$("#g-ebbo").value.trim()||null,notas:$("#g-notas").value.trim()||null,volver_el:$("#g-volver").value||null,ebbo_hecho:false,obras:selG,detalle:tieneAnota(S.an)?detalleActual():null};
+    try{ await Store.guardarConsulta(nuevo); toast("Consulta guardada"); $("#out").innerHTML=""; $("#c-pregunta").value=""; S.an=AN0(); $("#l-pol").value=""; pintarAnota(); await recargar(); go("inicio"); }
     catch(e){ toast("No se pudo guardar: "+(e.message||e)); btn.disabled=false; }
   };
   $("#out").scrollIntoView({behavior:"smooth",block:"start"});
 };
+
+
+/* ===================== ANOTACIÓN DE LA CONSULTA (como en la libreta) ===================== */
+const AN0=()=>({pol_l:"",tipo_l:"",yale:null,yale_con:[],yale_l:"",intori:null,intori_l:"",onire:null,onire_l:"",pide:[],pide_l:"",ebuarda:null,ebuarda_l:"",otan:null,otan_l:""});
+S.an=AN0();
+const normLetra=v=>String(v||"").trim().replace(/[^\d]+/g,"-").replace(/^-+|-+$/g,"");
+const MAYUS=t=>String(t||"").toUpperCase();
+function pintarDiloInfo(){
+  const el=$("#dilo-info"); if(!el) return;
+  const a=S.t1,b=S.t2, may=window.LETRAS_MAYORES.includes(a), m=window.manoDe(a,b), rz=window.REZO_LETRA[a];
+  el.innerHTML=`<div class="mano"><span><span class="note" style="display:block">${esc(dl(a).nombre)} es letra ${may?"mayor · se tira una vez":"menor · se tira dos veces"}</span><span class="note">${esc(m.motivo)}</span></span><span style="text-align:right;white-space:nowrap"><span class="note" style="display:block">Pida la mano</span><b>${m.mano.toUpperCase()}</b></span></div>
+   ${rz?`<div class="rezo">Rezo de ${esc(dl(a).nombre)}: ${esc(rz)}</div>`:`<div class="note" style="margin-top:8px">Rezo de ${esc(dl(a).nombre)}: no está en tu guía.</div>`}`;
+}
+const anChips=(campo,lista,multi,cls)=>`<div class="chips">${lista.map(x=>{ const on=multi?S.an[campo].includes(x):S.an[campo]===x; return `<button type="button" class="chip big ${cls||""}" data-an="${campo}" data-v="${esc(x)}" data-multi="${multi?1:""}" aria-pressed="${on}">${esc(x)}</button>`; }).join("")}</div>`;
+const anLet=campo=>`<input class="let" data-anl="${campo}" inputmode="decimal" placeholder="letra" value="${esc(S.an[campo])}" aria-label="Letra que respondió">`;
+const anSec=(titulo,campoL,cuerpo)=>`<div class="ansec"><div class="hd"><span>${titulo}</span>${campoL?anLet(campoL):""}</div>${cuerpo}</div>`;
+function pintarAnota(){
+  const el=$("#anota"); if(!el) return; const ire=S.pol==="ire", A=S.an;
+  let h=`<h3 style="margin:0">Anotación</h3>`;
+  h+=anSec("Tipo: letra que respondió","tipo_l","");
+  if(ire){
+    h+=anSec("¿Es yale (completo)?","yale_l",anChips("yale",["Yale","Coto"],false,"ire"));
+    if(A.yale==="Coto") h+=anSec("Se hace yale con",null,anChips("yale_con",window.YALE_CON,true));
+  } else {
+    h+=anSec("Intori (qué lo causa)","intori_l",anChips("intori",window.INTORI,false,"oso"));
+  }
+  h+=anSec("Onire (quién lo defiende)","onire_l",anChips("onire",window.ONIRE_LISTA,false));
+  h+=anSec("Pide algo por defenderlo","pide_l",anChips("pide",window.YALE_CON,true));
+  if(!ire) h+=anSec("¿Ebuarda con los ebbós?","ebuarda_l",anChips("ebuarda",["Sí","No"],false));
+  h+=anSec("¿Está otán la consulta?","otan_l",anChips("otan",["Sí","No"],false));
+  h+=`<div class="linea" id="lineaPrev">${esc(lineaAnota(signoActual(),S.pol,S.tipo,A))}</div>
+    <div class="row"><button type="button" class="btn ghost small" id="anLimpiar">Limpiar anotación</button></div>`;
+  el.innerHTML=h;
+  $("#anLimpiar").onclick=()=>{ S.an=AN0(); $("#l-pol").value=""; pintarAnota(); };
+}
+function signoActual(){ if(S.sys==="dilo") return S.t1+"-"+S.t2; const r=findMeji(S.R).n,l=findMeji(S.L).n; return ifaNombre(r,l); }
+function tipoNombre(pol,tipoId){ const l=pol==="ire"?IRE_TIPOS:OSOGBO_TIPOS; const t=l.find(x=>x.id===tipoId); return t?t.nombre.replace(/^Iré\s+/,""):""; }
+// numero: "7-8" o nombre del Odu; tipo: id
+function lineaAnota(numero,pol,tipo,A){
+  const p=[numero, (pol==="ire"?"IRÉ":"OSOGBO")+(tipo?" "+MAYUS(tipoNombre(pol,tipo)):"")];
+  const L=[]; const lt=(n,v)=>{ if(v) L.push(n+" "+v); };
+  lt(pol==="ire"?"Iré":"Osogbo",A.pol_l); lt("Tipo",A.tipo_l);
+  if(pol==="ire"&&A.yale){ p.push(A.yale==="Yale"?"YALE":"COTO"+(A.yale_con.length?" "+MAYUS(A.yale_con.join(", ")):"")); lt(A.yale==="Yale"?"Yale":"Coto",A.yale_l); }
+  if(pol!=="ire"&&A.intori){ p.push("INTORI "+MAYUS(A.intori)); lt("Intori",A.intori_l); }
+  if(A.onire){ p.push("ONIRE "+MAYUS(A.onire)); lt("Onire",A.onire_l); }
+  if(A.pide.length){ p.push("PIDE "+MAYUS(A.pide.join(", "))); lt("Pide",A.pide_l); }
+  if(pol!=="ire"&&A.ebuarda){ p.push(A.ebuarda==="Sí"?"EBUARDA":"NO EBUARDA"); lt("Ebuarda",A.ebuarda_l); }
+  if(A.otan){ p.push(A.otan==="Sí"?"OTÁN":"NO OTÁN"); lt("Otán",A.otan_l); }
+  return p.join(" · ")+(L.length?"\n"+L.join(" · "):"");
+}
+function refrescarLinea(){ const el=$("#lineaPrev"); if(el) el.textContent=lineaAnota(signoActual(),S.pol,S.tipo,S.an); }
+$("#anota").addEventListener("click",e=>{ const b=e.target.closest("[data-an]"); if(!b) return;
+  const c=b.dataset.an, v=b.dataset.v;
+  if(b.dataset.multi){ const a=S.an[c]; const i=a.indexOf(v); i<0?a.push(v):a.splice(i,1); }
+  else S.an[c]=S.an[c]===v?null:v;
+  if(c==="yale"&&S.an.yale!=="Coto") S.an.yale_con=[];
+  pintarAnota(); });
+$("#anota").addEventListener("input",e=>{ const i=e.target.closest("[data-anl]"); if(!i) return; S.an[i.dataset.anl]=normLetra(i.value); refrescarLinea(); });
+$("#l-pol").addEventListener("input",e=>{ S.an.pol_l=normLetra(e.target.value); refrescarLinea(); });
+const detalleActual=()=>({...JSON.parse(JSON.stringify(S.an)),mano:S.sys==="dilo"?window.manoDe(S.t1,S.t2).mano:null,linea:lineaAnota(signoActual(),S.pol,S.tipo,S.an)});
+const tieneAnota=A=>!!(A&&(A.pol_l||A.tipo_l||A.yale||A.intori||A.onire||(A.pide&&A.pide.length)||A.ebuarda||A.otan));
 
 /* ===================== INICIO ===================== */
 function itemConsulta(q){
@@ -399,7 +461,8 @@ document.addEventListener("change",async e=>{
 /* ===================== FICHA DE CONSULTA ===================== */
 function abrirConsulta(id){
   const q=S.consultas.find(x=>x.id===id); if(!q) return;
-  openSheet(`${lectura(q)}
+  const D_=q.detalle&&q.detalle.linea?`<div class="card" style="margin-bottom:12px"><h3>Anotación</h3><div class="linea">${esc(q.detalle.linea)}</div>${q.detalle.mano?`<div class="note" style="margin-top:6px">Mano pedida: ${esc(q.detalle.mano)}</div>`:""}</div>`:"";
+  openSheet(`${D_}${lectura(q)}
    <form class="card stack" id="editQ" style="margin-top:12px">
     <h3 style="margin:0">Registro</h3>
     <div class="note">${fmtFecha(q.fecha)} · ${esc(q.consultado_id?nombreDe(q.consultado_id):"Sin asignar")}${q.pregunta?" · "+esc(q.pregunta):""}</div>
@@ -416,7 +479,7 @@ function abrirConsulta(id){
     try{ await Store.guardarConsulta({id:q.id,obras:selE,ebbo:$("#e-ebbo").value.trim()||null,ebbo_hecho:$("#e-hecho").checked,notas:$("#e-notas").value.trim()||null,volver_el:$("#e-volver").value||null}); toast("Cambios guardados"); closeSheet(); await recargar(); }
     catch(e){ toast("No se pudo guardar: "+(e.message||e)); } };
   $("#copiarQ").onclick=async()=>{ const base=q.sistema==="dilo"?dl(q.pie1):mj(q.pie1);
-    const t=`${q.signo} (${q.sistema==="dilo"?"Diloggún "+q.pie1+"-"+q.pie2:"Ifá, Odu "+ifaOrden(q.pie1,q.pie2)})\n${q.orientacion==="ire"?"Iré":"Osogbo"}${q.tipo?" · "+q.tipo:""}\nConsultado: ${q.consultado_id?nombreDe(q.consultado_id):"—"}\nRefrán: ${base.refranes[0]||"por documentar"}\nConsejo: ${base.consejos[0]}${q.ebbo?"\nEbbó: "+q.ebbo:""}${(q.obras||[]).length?"\nObras: "+q.obras.map(o=>o.titulo+(o.hecha?" (hecha)":"")).join("; "):""}${q.volver_el?"\nVolver el: "+fmtFecha(q.volver_el):""}`;
+    const t=`${q.signo} (${q.sistema==="dilo"?"Diloggún "+q.pie1+"-"+q.pie2:"Ifá, Odu "+ifaOrden(q.pie1,q.pie2)})\n${q.orientacion==="ire"?"Iré":"Osogbo"}${q.tipo?" · "+q.tipo:""}${q.detalle&&q.detalle.linea?"\n"+q.detalle.linea:""}\nConsultado: ${q.consultado_id?nombreDe(q.consultado_id):"—"}\nRefrán: ${base.refranes[0]||"por documentar"}\nConsejo: ${base.consejos[0]}${q.ebbo?"\nEbbó: "+q.ebbo:""}${(q.obras||[]).length?"\nObras: "+q.obras.map(o=>o.titulo+(o.hecha?" (hecha)":"")).join("; "):""}${q.volver_el?"\nVolver el: "+fmtFecha(q.volver_el):""}`;
     try{ await navigator.clipboard.writeText(t); toast("Resumen copiado"); }catch(e){ toast("No se pudo copiar en este navegador"); } };
   confirmar("#borrarQ","¿Borrar esta consulta? Toca otra vez para confirmar.",async()=>{ await Store.borrarConsulta(q.id); toast("Consulta borrada"); closeSheet(); await recargar(); });
 }
@@ -664,5 +727,5 @@ if(CLOUD){ sb.auth.onAuthStateChange(async(ev,session)=>{
 }); }
 
 /* ===================== ARRANQUE ===================== */
-grid($("#g1"),"t1"); grid($("#g2"),"t2"); upLbl(); tipos(); legs(); renderOri(); renderLib();
+grid($("#g1"),"t1"); grid($("#g2"),"t2"); upLbl(); tipos(); legs(); pintarAnota(); renderOri(); renderLib();
 (async()=>{ const ok=await Store.init(); if(ok) await entrar(); else mostrarAuth(); })();

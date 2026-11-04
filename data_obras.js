@@ -14,7 +14,12 @@ window.OBRA_POR_TIPO = {
   aye:["dinero","suerte","amor"], elese_osha:["ofrenda"], elese_eggun:["limpieza","ofrenda"], deleno:["suerte","caminos"],
   iku:["proteccion","limpieza"], ano:["salud","limpieza"], eyo:["proteccion","limpieza"], ofo:["caminos","dinero"],
   araye:["proteccion","limpieza"], akoba:["limpieza","proteccion"], ogu:["limpieza","proteccion"],
-  tiyatiya:["hogar","limpieza","amor"], fitibo:["proteccion","limpieza"]
+  tiyatiya:["hogar","limpieza","amor"], fitibo:["proteccion","limpieza"],
+  otonowa:["ofrenda","suerte"], elese_eledda:["ofrenda","limpieza"], lowo:["trabajo","negocio"], araonu:["limpieza","ofrenda"],
+  araoko:["ofrenda","salud"], babatobi:["hogar"], iyatobi:["hogar"], okuni:["amor","hogar"], obini:["amor","hogar"],
+  bata:["ofrenda"], oma:["trabajo","suerte"], buyoko:["hogar","suerte"], ina:["proteccion","limpieza"],
+  elenu:["proteccion","limpieza"], achelu:["justicia","proteccion"], ona:["caminos","limpieza"],
+  afoshe:["limpieza","proteccion"], shepe:["limpieza","proteccion"], ofo_buyoko:["hogar","caminos"]
 };
 // Orisha que rige o "es dueño" de cada letra del Diloggún (lo más extendido; varía entre casas).
 // Los Meji de Ifá se toman por su letra equivalente del Diloggún.
