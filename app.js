@@ -142,18 +142,71 @@ const ORI_ALIAS=o=>{ const n=String(o||"").normalize("NFD").replace(/[\u0300-\u0
   return n; };
 const todasObras=()=>(S.misObras||[]).map(o=>({...o,propia:true,objetivos:o.objetivos||[],materiales:o.materiales||[]})).concat(window.OBRAS||[]);
 function tipoIdDe(txt){ if(!txt) return null; const t=[...IRE_TIPOS,...OSOGBO_TIPOS].find(x=>txt.startsWith(x.nombre)); return t?t.id:null; }
-function obrasSugeridas(orishas,pol,tipoTxt){
-  const tid=tipoIdDe(tipoTxt);
-  const obj=tid?window.OBRA_POR_TIPO[tid]:(pol==="ire"?["ofrenda","suerte","caminos","dinero"]:["limpieza","proteccion","caminos"]);
+function objetivosDe(pol,tipoTxt){ const tid=tipoIdDe(tipoTxt);
+  return tid?window.OBRA_POR_TIPO[tid]:(pol==="ire"?["ofrenda","suerte","caminos","dinero"]:["limpieza","proteccion","caminos"]); }
+// regentes: [[orishas de la 1.ª letra],[orishas de la 2.ª letra]]; orishas: todos los que hablan
+function obrasSugeridas(orishas,pol,tipoTxt,regentes,n){
+  const obj=objetivosDe(pol,tipoTxt);
+  const r1=(regentes&&regentes[0]||[]).map(ORI_ALIAS), r2=(regentes&&regentes[1]||[]).map(ORI_ALIAS);
   const oris=uniq(orishas.map(ORI_ALIAS));
-  const sc=o=>{ const i=oris.indexOf(ORI_ALIAS(o.orisha)); if(i<0) return -1; const hit=o.objetivos.filter(x=>obj.includes(x)).length; if(!hit) return -1; return (o.propia?100:0)+hit*10-i; };
-  return todasObras().map(o=>[sc(o),o]).filter(x=>x[0]>=0).sort((a,b)=>b[0]-a[0]).slice(0,4).map(x=>x[1]);
+  const key=r1.join()+"|"+r2.join()+"|"+oris.join()+"|"+pol;
+  const h=t=>{ let x=7; for(const c of key+t) x=(x*31+c.charCodeAt(0))>>>0; return x%7; }; // desempate distinto por signo
+  const sc=o=>{ const a=ORI_ALIAS(o.orisha), i=oris.indexOf(a);
+    let peso=r1.includes(a)?60:r2.includes(a)?40:(i<0?-1:Math.max(1,12-i));
+    if(peso<0) return -1;
+    const hit=(o.objetivos||[]).filter(x=>obj.includes(x)).length;
+    if(!hit && peso<40) return -1;
+    return (o.propia?100:0)+peso+hit*8+h(o.id); };
+  return todasObras().map(o=>[sc(o),o]).filter(x=>x[0]>=0).sort((a,b)=>b[0]-a[0]).slice(0,n||5).map(x=>x[1]);
 }
-function obrasHTML(orishas,pol,tipoTxt){
-  const l=obrasSugeridas(orishas,pol,tipoTxt);
-  if(!l.length) return "";
-  return sec("Obras sugeridas",`<div class="list">${l.map(itemObra).join("")}</div><div class="note" style="margin-top:8px">Según los Orishas que hablan y el ${pol==="ire"?"iré":"osogbo"}${tipoTxt?" marcado":""}. Antes de hacer cualquier obra, pregúntele al oráculo si la acepta.</div>`);
+const tieneObras=ori=>todasObras().some(o=>ORI_ALIAS(o.orisha)===ORI_ALIAS(ori));
+function obrasHTML(orishas,pol,tipoTxt,regentes){
+  const l=obrasSugeridas(orishas,pol,tipoTxt,regentes);
+  const reg=uniq([].concat(...(regentes||[])));
+  const sin=reg.filter(o=>!tieneObras(o));
+  const regTxt=reg.length?`<p style="margin:0 0 10px">Rige${reg.length>1?"n":""}: <b>${reg.map(esc).join(", ")}</b>.</p>`:"";
+  const aviso=sin.length?`<div class="note" style="margin-top:8px">Todavía no hay obras de ${sin.map(esc).join(" ni de ")} en la biblioteca. Puedes agregar las de tu casa en Signos › Obras › «Nueva obra».</div>`:"";
+  if(!l.length) return sec("Obras sugeridas",regTxt+`<div class="empty">No hay obras que encajen con este signo todavía.</div>`+aviso);
+  return sec("Obras sugeridas",regTxt+`<div class="list">${l.map(itemObra).join("")}</div>${aviso}<div class="note" style="margin-top:8px">Primero las del Orisha que rige la letra, luego las de los que hablan, según el ${pol==="ire"?"iré":"osogbo"}${tipoTxt?" marcado":""}. Antes de hacer cualquier obra, pregúntele al oráculo si la acepta.</div>`);
 }
+const regentesDilo=(a,b)=>[window.REGENTE_LETRA[a]||[], a===b?[]:(window.REGENTE_LETRA[b]||[])];
+const regentesIfa=(r,l)=>regentesDilo(mj(r).dilo,mj(l).dilo);
+const regentesDe=q=>q.sistema==="dilo"?regentesDilo(q.pie1,q.pie2):regentesIfa(q.pie1,q.pie2);
+const orishasDe=q=>{ if(q.sistema==="dilo"){ const A=dl(q.pie1),B=dl(q.pie2); return uniq(A.orishas.concat(B.orishas)); } const A=mj(q.pie1),B=mj(q.pie2); return uniq(A.orishas.concat(q.pie1===q.pie2?[]:B.orishas)); };
+
+/* ---------- Selector de obras para una consulta ---------- */
+// sel: array [{id,titulo,orisha,hecha}]
+function selectorObrasHTML(px,q,sel){
+  const sug=obrasSugeridas(orishasDe(q),q.orientacion,q.tipo,regentesDe(q),6);
+  return `<div class="stack" id="${px}-obras" style="gap:8px">
+    <div class="f" style="margin:0">Obras para esta consulta</div>
+    <div id="${px}-sel"></div>
+    <div class="note">Sugeridas para ${esc(q.signo)}:</div>
+    <div class="chips" id="${px}-sug">${sug.map(o=>`<button type="button" class="chip ori" data-add="${esc(o.id)}">+ ${esc(o.titulo)}</button>`).join("")||'<span class="note">Ninguna</span>'}</div>
+    <input type="search" id="${px}-buscar" placeholder="Buscar otra obra: Orisha, objetivo, material…" autocomplete="off">
+    <div class="list" id="${px}-res"></div>
+  </div>`;
+}
+function wireSelectorObras(px,sel,onChange){
+  const pinta=()=>{ $("#"+px+"-sel").innerHTML=sel.length?`<div class="list">${sel.map((o,i)=>`<div class="item"><label class="check" style="flex:1;min-width:0"><input type="checkbox" data-oh="${i}" ${o.hecha?"checked":""}><span style="min-width:0"><b style="display:block">${esc(o.titulo)}</b><span class="note">${esc(o.orisha||"")}${o.hecha?" · hecha":""}</span></span></label><button type="button" class="link" data-ver="${esc(o.id)}">Ver</button><button type="button" class="link" data-quitar="${i}" aria-label="Quitar">✕</button></div>`).join("")}</div>`:`<div class="note">Ninguna obra seleccionada.</div>`;
+    [...document.querySelectorAll("#"+px+"-sug [data-add]")].forEach(b=>b.hidden=sel.some(o=>o.id===b.dataset.add)); onChange&&onChange(sel); };
+  const add=id=>{ if(sel.some(o=>o.id===id)) return; const o=todasObras().find(x=>x.id===id); if(!o) return; sel.push({id:o.id,titulo:o.titulo,orisha:o.orisha||"",hecha:false}); pinta(); toast("Obra agregada"); };
+  const box=$("#"+px+"-obras");
+  box.addEventListener("click",e=>{ const a=e.target.closest("[data-add]"); if(a){ e.preventDefault(); add(a.dataset.add); return; }
+    const x=e.target.closest("[data-quitar]"); if(x){ e.preventDefault(); sel.splice(+x.dataset.quitar,1); pinta(); return; }
+    const v=e.target.closest("[data-ver]"); if(v){ e.preventDefault(); verObraPopup(v.dataset.ver); } });
+  box.addEventListener("change",e=>{ const c=e.target.closest("[data-oh]"); if(c){ sel[+c.dataset.oh].hecha=c.checked; pinta(); } });
+  $("#"+px+"-buscar").oninput=e=>{ const nq=norm(e.target.value.trim());
+    $("#"+px+"-res").innerHTML=nq.length<2?"":todasObras().filter(o=>norm([o.titulo,o.orisha,o.tipo,(o.objetivos||[]).map(x=>window.OBRA_OBJETIVOS[x]||x).join(" "),(o.materiales||[]).join(" ")].join(" ")).includes(nq)).slice(0,12)
+      .map(o=>`<button type="button" class="item" data-add="${esc(o.id)}"><span class="n" style="font-size:13px">${esc((o.orisha||"?").slice(0,3))}</span><span class="x"><b>${esc(o.titulo)}</b><span>${esc(o.orisha||"")} · toca para agregar</span></span></button>`).join("")||`<div class="empty">Sin resultados.</div>`; };
+  pinta();
+}
+// Ver una obra sin perder el formulario abierto
+function verObraPopup(id){ const o=todasObras().find(x=>x.id===id); if(!o) return;
+  let d=$("#obraPop"); if(!d){ d=document.createElement("dialog"); d.id="obraPop"; d.className="pop"; document.body.appendChild(d); }
+  d.innerHTML=`<div class="popin">${fichaObra({...o,propia:false,fuente:o.fuente||"Mi obra"}).replace(/<div class="row" style="margin-top:12px"><button class="btn ghost" id="editObra">[\s\S]*$/,"")}<button class="btn" type="button" id="cerrarPop" style="margin-top:12px;width:100%">Cerrar</button></div>`;
+  $("#cerrarPop").onclick=()=>d.close(); d.onclick=e=>{ if(e.target===d) d.close(); };
+  d.showModal(); d.querySelector(".popin").scrollTop=0; }
 const caminosDe=key=>(window.CAMINOS_OSHUN||[]).filter(c=>c.dilo===key);
 function caminosHTML(lista){ if(!lista.length) return ""; return sec("Caminos de Oshún que nacen aquí",`<ul class="l">${lista.map(c=>`<li><b>Oshún ${esc(c.camino)}</b> (${esc(c.signo)}): ${esc(c.rasgo)}</li>`).join("")}</ul><div class="note" style="margin-top:8px">Fuente: «236 obras con Oshún». El signo de cada camino varía entre casas.</div>`); }
 function itemObra(o){ const obj=(o.objetivos||[]).map(x=>window.OBRA_OBJETIVOS[x]||x).slice(0,2).join(" · ");
@@ -221,9 +274,9 @@ function lecturaDilo(a,b,pol,tipo){
    ${sec("Orishas que hablan",chipsOri(uniq(A.orishas.concat(B.orishas))))}
    ${sec("Consejos y recomendaciones",ul(A.consejos.concat(meyi?[]:B.consejos.slice(0,2))))}
    ${sec("Prohibiciones",ul(uniq(A.prohibiciones.concat(meyi?[]:B.prohibiciones.slice(0,2)))))}
-   ${sec("Ebbó que señala la tradición",ul(A.ebbo.concat(meyi?[]:B.ebbo.slice(0,1)))+`<div class="note" style="margin-top:8px">El ebbó exacto lo marca el oráculo en la consulta.</div>`)}
+   ${sec("Ebbó que señala la tradición",ul(A.ebbo.concat(meyi?[]:B.ebbo.slice(0,1)))+`<div class="note" style="margin-top:8px">Es el ebbó propio de ${esc(A.nombre)}${meyi?"":" (más uno de "+esc(B.nombre)+")"}, por eso se repite en los signos que empiezan por esta letra. El ebbó exacto lo marca el oráculo en la consulta.</div>`)}
    ${sec("Patakí",patakiHTML(A.pataki)+(meyi?"":`<details style="margin-top:12px"><summary>Patakí de ${esc(B.nombre)}</summary><div style="margin-top:8px">${patakiHTML(B.pataki)}</div></details>`))}
-   ${obrasHTML(uniq(A.orishas.concat(B.orishas)),pol,tipo)}
+   ${obrasHTML(uniq(A.orishas.concat(B.orishas)),pol,tipo,regentesDilo(a,b))}
    ${caminosHTML(caminosDe(a+"-"+b))}
    ${A.gesto?sec("Al salir la letra",`<p style="margin:0">${esc(A.gesto)}</p>`):""}
    ${sec("Nace en esta letra",ul(A.nace))}
@@ -242,9 +295,9 @@ function lecturaIfa(r,l,pol,tipo){
    ${sec("Orishas que se manifiestan",chipsOri(uniq(A.orishas.concat(meji?[]:B.orishas.slice(0,4)))))}
    ${sec("Recomendaciones",ul(A.consejos.concat(meji?[]:B.consejos.slice(0,2))))}
    ${sec("Prohibiciones",ul(A.prohibiciones.concat(meji?[]:B.prohibiciones.slice(0,2))))}
-   ${sec("Ebbó que señala la tradición",ul(A.ebbo)+`<div class="note" style="margin-top:8px">El ebbó exacto lo marca el babalawo en el tablero.</div>`)}
+   ${sec("Ebbó que señala la tradición",ul(A.ebbo)+`<div class="note" style="margin-top:8px">Es el ebbó propio de ${esc(A.nombre)}, la pierna que manda, por eso se repite en los Odu que empiezan por ella. El ebbó exacto lo marca el babalawo en el tablero.</div>`)}
    ${sec("Patakí",patakiHTML(A.pataki)+(meji?"":`<details style="margin-top:12px"><summary>Patakí de ${esc(B.nombre)}</summary><div style="margin-top:8px">${patakiHTML(B.pataki)}</div></details>`))}
-   ${obrasHTML(uniq(A.orishas.concat(meji?[]:B.orishas)),pol,tipo)}
+   ${obrasHTML(uniq(A.orishas.concat(meji?[]:B.orishas)),pol,tipo,regentesIfa(r,l))}
    ${caminosHTML(caminosDe(A.dilo+"-"+B.dilo))}
    ${sec("Nace en este Odu",ul(A.nace))}
   </div>`;
@@ -286,9 +339,10 @@ function pintarQuien(sel){
 }
 $("#c-quien").onchange=e=>{ if(e.target.value==="__nuevo"){ e.target.value=""; formConsultado(null, c=>{ pintarQuien(c.id); }); } };
 
-function formGuardar(){
+function formGuardar(q){
   return `<form class="card stack" id="guardarForm">
     <h3 style="margin:0">Registrar la consulta</h3>
+    ${selectorObrasHTML("g",q,[])}
     <label class="f">Ebbó marcado<textarea id="g-ebbo" placeholder="Lo que marcó el oráculo"></textarea></label>
     <label class="f">Notas<textarea id="g-notas" placeholder="Orisha que habló, detalles, recomendaciones"></textarea></label>
     <label class="f">Volver a consultar el<input type="date" id="g-volver"></label>
@@ -298,11 +352,12 @@ function formGuardar(){
 $("#ver").onclick=()=>{
   let a,b; if(S.sys==="dilo"){a=S.t1;b=S.t2;} else {a=findMeji(S.R).n;b=findMeji(S.L).n;}
   const q={sistema:S.sys,pie1:a,pie2:b,signo:signoDe(S.sys,a,b),orientacion:S.pol,tipo:tipoTxt()};
-  $("#out").innerHTML=lectura(q)+formGuardar();
+  $("#out").innerHTML=lectura(q)+formGuardar(q);
+  const selG=[]; wireSelectorObras("g",selG);
   $("#guardarForm").onsubmit=async ev=>{
-    ev.preventDefault(); const btn=ev.target.querySelector("button"); btn.disabled=true;
+    ev.preventDefault(); const btn=ev.target.querySelector("button[type=submit]"); btn.disabled=true;
     const cid=$("#c-quien").value||null;
-    const nuevo={...q,consultado_id:cid,pregunta:$("#c-pregunta").value.trim()||null,ebbo:$("#g-ebbo").value.trim()||null,notas:$("#g-notas").value.trim()||null,volver_el:$("#g-volver").value||null,ebbo_hecho:false};
+    const nuevo={...q,consultado_id:cid,pregunta:$("#c-pregunta").value.trim()||null,ebbo:$("#g-ebbo").value.trim()||null,notas:$("#g-notas").value.trim()||null,volver_el:$("#g-volver").value||null,ebbo_hecho:false,obras:selG};
     try{ await Store.guardarConsulta(nuevo); toast("Consulta guardada"); $("#out").innerHTML=""; $("#c-pregunta").value=""; await recargar(); go("inicio"); }
     catch(e){ toast("No se pudo guardar: "+(e.message||e)); btn.disabled=false; }
   };
@@ -321,15 +376,21 @@ function pintarInicio(){
   $("#saludo").textContent=n?`Aché, ${n}`:"Aché";
   const ini=new Date(); ini.setDate(1); ini.setHours(0,0,0,0);
   const pend=S.consultas.filter(q=>q.ebbo&&!q.ebbo_hecho);
+  const pendO=[]; S.consultas.forEach(q=>(q.obras||[]).forEach((o,i)=>{ if(!o.hecha) pendO.push({q,o,i}); }));
   const citas=S.consultas.filter(q=>q.volver_el&&q.volver_el>=hoy).sort((a,b)=>a.volver_el.localeCompare(b.volver_el));
   $("#t-mes").textContent=S.consultas.filter(q=>new Date(q.fecha)>=ini).length;
   $("#t-cons").textContent=S.gente.length;
-  $("#t-ebbo").textContent=pend.length; $("#t-ebbo-w").classList.toggle("alert",pend.length>0);
-  $("#l-ebbo").innerHTML=pend.length?pend.slice(0,8).map(q=>`<div class="item"><label class="check" style="flex:1;min-width:0"><input type="checkbox" data-hecho="${q.id}"><span style="min-width:0"><b style="display:block">${esc(q.consultado_id?nombreDe(q.consultado_id):"Sin asignar")}</b><span class="note" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(q.ebbo)}</span></span></label><button class="link" data-q="${q.id}">Ver</button></div>`).join(""):`<div class="empty">No hay ebbó pendientes.</div>`;
+  $("#t-ebbo").textContent=pend.length+pendO.length; $("#t-ebbo-w").classList.toggle("alert",pend.length+pendO.length>0);
+  $("#l-ebbo").innerHTML=pend.length?pend.slice(0,8).map(q=>`<div class="item"><label class="check" style="flex:1;min-width:0"><input type="checkbox" data-hecho="${q.id}"><span style="min-width:0"><b style="display:block">${esc(q.consultado_id?nombreDe(q.consultado_id):"Sin asignar")}</b><span class="note" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(q.ebbo)}</span></span></label><button class="link" data-q="${q.id}">Ver</button></div>`).join("")+pendO.slice(0,8).map(x=>`<div class="item"><label class="check" style="flex:1;min-width:0"><input type="checkbox" data-obhecha="${x.q.id}|${x.i}"><span style="min-width:0"><b style="display:block">${esc(x.q.consultado_id?nombreDe(x.q.consultado_id):"Sin asignar")}</b><span class="note" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Obra: ${esc(x.o.titulo)}</span></span></label><button class="link" data-q="${x.q.id}">Ver</button></div>`).join(""):(pendO.length?pendO.slice(0,8).map(x=>`<div class="item"><label class="check" style="flex:1;min-width:0"><input type="checkbox" data-obhecha="${x.q.id}|${x.i}"><span style="min-width:0"><b style="display:block">${esc(x.q.consultado_id?nombreDe(x.q.consultado_id):"Sin asignar")}</b><span class="note" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Obra: ${esc(x.o.titulo)}</span></span></label><button class="link" data-q="${x.q.id}">Ver</button></div>`).join(""):`<div class="empty">No hay ebbó ni obras pendientes.</div>`);
   $("#l-citas").innerHTML=citas.length?citas.slice(0,6).map(q=>`<button class="item" data-q="${q.id}"><span class="n" style="font-size:13px;line-height:1.05;text-align:center">${new Date(q.volver_el+"T12:00:00").toLocaleDateString("es",{day:"numeric"})}<br>${new Date(q.volver_el+"T12:00:00").toLocaleDateString("es",{month:"short"})}</span><span class="x"><b>${esc(q.consultado_id?nombreDe(q.consultado_id):"Sin asignar")}</b><span>Volver a consultar · ${esc(q.signo)}</span></span></button>`).join(""):`<div class="empty">No hay citas próximas.</div>`;
   $("#l-recientes").innerHTML=S.consultas.length?S.consultas.slice(0,6).map(itemConsulta).join(""):`<div class="empty">Aún no hay consultas. Toca «Nueva consulta» para empezar.</div>`;
 }
 document.addEventListener("change",async e=>{
+  const ob=e.target.closest("[data-obhecha]");
+  if(ob){ const [qid,i]=ob.dataset.obhecha.split("|"); const q=S.consultas.find(x=>x.id===qid); if(!q) return;
+    const obras=(q.obras||[]).map((o,k)=>k===+i?{...o,hecha:true}:o);
+    try{ await Store.guardarConsulta({id:qid,obras}); toast("Obra marcada como hecha"); await recargar(); }
+    catch(err){ toast("No se pudo actualizar: "+(err.message||err)); ob.checked=false; } return; }
   const c=e.target.closest("[data-hecho]"); if(!c) return;
   try{ await Store.guardarConsulta({id:c.dataset.hecho,ebbo_hecho:true}); toast("Ebbó marcado como hecho"); await recargar(); }
   catch(err){ toast("No se pudo actualizar: "+(err.message||err)); c.checked=false; }
@@ -342,6 +403,7 @@ function abrirConsulta(id){
    <form class="card stack" id="editQ" style="margin-top:12px">
     <h3 style="margin:0">Registro</h3>
     <div class="note">${fmtFecha(q.fecha)} · ${esc(q.consultado_id?nombreDe(q.consultado_id):"Sin asignar")}${q.pregunta?" · "+esc(q.pregunta):""}</div>
+    ${selectorObrasHTML("e",q,null)}
     <label class="f">Ebbó marcado<textarea id="e-ebbo">${esc(q.ebbo||"")}</textarea></label>
     <label class="check"><input type="checkbox" id="e-hecho" ${q.ebbo_hecho?"checked":""}> Ebbó hecho</label>
     <label class="f">Notas<textarea id="e-notas">${esc(q.notas||"")}</textarea></label>
@@ -349,11 +411,12 @@ function abrirConsulta(id){
     <div class="row"><button class="btn" type="submit">Guardar cambios</button></div>
     <div class="row"><button class="btn ghost" type="button" id="copiarQ">Copiar resumen</button><button class="btn ghost" type="button" id="borrarQ">Borrar</button></div>
    </form>`);
+  const selE=(q.obras||[]).map(o=>({...o})); wireSelectorObras("e",selE);
   $("#editQ").onsubmit=async ev=>{ev.preventDefault();
-    try{ await Store.guardarConsulta({id:q.id,ebbo:$("#e-ebbo").value.trim()||null,ebbo_hecho:$("#e-hecho").checked,notas:$("#e-notas").value.trim()||null,volver_el:$("#e-volver").value||null}); toast("Cambios guardados"); closeSheet(); await recargar(); }
+    try{ await Store.guardarConsulta({id:q.id,obras:selE,ebbo:$("#e-ebbo").value.trim()||null,ebbo_hecho:$("#e-hecho").checked,notas:$("#e-notas").value.trim()||null,volver_el:$("#e-volver").value||null}); toast("Cambios guardados"); closeSheet(); await recargar(); }
     catch(e){ toast("No se pudo guardar: "+(e.message||e)); } };
   $("#copiarQ").onclick=async()=>{ const base=q.sistema==="dilo"?dl(q.pie1):mj(q.pie1);
-    const t=`${q.signo} (${q.sistema==="dilo"?"Diloggún "+q.pie1+"-"+q.pie2:"Ifá, Odu "+ifaOrden(q.pie1,q.pie2)})\n${q.orientacion==="ire"?"Iré":"Osogbo"}${q.tipo?" · "+q.tipo:""}\nConsultado: ${q.consultado_id?nombreDe(q.consultado_id):"—"}\nRefrán: ${base.refranes[0]||"por documentar"}\nConsejo: ${base.consejos[0]}${q.ebbo?"\nEbbó: "+q.ebbo:""}${q.volver_el?"\nVolver el: "+fmtFecha(q.volver_el):""}`;
+    const t=`${q.signo} (${q.sistema==="dilo"?"Diloggún "+q.pie1+"-"+q.pie2:"Ifá, Odu "+ifaOrden(q.pie1,q.pie2)})\n${q.orientacion==="ire"?"Iré":"Osogbo"}${q.tipo?" · "+q.tipo:""}\nConsultado: ${q.consultado_id?nombreDe(q.consultado_id):"—"}\nRefrán: ${base.refranes[0]||"por documentar"}\nConsejo: ${base.consejos[0]}${q.ebbo?"\nEbbó: "+q.ebbo:""}${(q.obras||[]).length?"\nObras: "+q.obras.map(o=>o.titulo+(o.hecha?" (hecha)":"")).join("; "):""}${q.volver_el?"\nVolver el: "+fmtFecha(q.volver_el):""}`;
     try{ await navigator.clipboard.writeText(t); toast("Resumen copiado"); }catch(e){ toast("No se pudo copiar en este navegador"); } };
   confirmar("#borrarQ","¿Borrar esta consulta? Toca otra vez para confirmar.",async()=>{ await Store.borrarConsulta(q.id); toast("Consulta borrada"); closeSheet(); await recargar(); });
 }

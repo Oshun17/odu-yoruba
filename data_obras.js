@@ -5,17 +5,79 @@
 window.OBRA_OBJETIVOS = {
   dinero:"Dinero y prosperidad", negocio:"Negocio y clientes", trabajo:"Trabajo y empleo", suerte:"Suerte y evolución",
   caminos:"Abrir caminos", salud:"Salud", fertilidad:"Embarazo y maternidad", hogar:"Casa y familia",
-  proteccion:"Protección", justicia:"Justicia y juicios", limpieza:"Limpieza y despojo", ofrenda:"Agradar al Orisha"
+  proteccion:"Protección", justicia:"Justicia y juicios", limpieza:"Limpieza y despojo", ofrenda:"Agradar al Orisha",
+  amor:"Amor propio y de pareja"
 };
 // Qué objetivos sugiere cada tipo de iré u osogbo
 window.OBRA_POR_TIPO = {
   ariku:["salud","ofrenda"], owo:["dinero","negocio"], omo:["fertilidad","hogar"], ashegun:["proteccion","justicia"],
-  aye:["dinero","suerte"], elese_osha:["ofrenda"], elese_eggun:["limpieza","ofrenda"], deleno:["suerte","caminos"],
+  aye:["dinero","suerte","amor"], elese_osha:["ofrenda"], elese_eggun:["limpieza","ofrenda"], deleno:["suerte","caminos"],
   iku:["proteccion","limpieza"], ano:["salud","limpieza"], eyo:["proteccion","limpieza"], ofo:["caminos","dinero"],
   araye:["proteccion","limpieza"], akoba:["limpieza","proteccion"], ogu:["limpieza","proteccion"],
-  tiyatiya:["hogar","limpieza"], fitibo:["proteccion","limpieza"]
+  tiyatiya:["hogar","limpieza","amor"], fitibo:["proteccion","limpieza"]
+};
+// Orisha que rige o "es dueño" de cada letra del Diloggún (lo más extendido; varía entre casas).
+// Los Meji de Ifá se toman por su letra equivalente del Diloggún.
+window.REGENTE_LETRA = {
+  1:["Elegguá","Aggayú"], 2:["Oshosi","Ibeyis"], 3:["Oggún"], 4:["Olokun","Yemayá"], 5:["Oshún"], 6:["Shangó"],
+  7:["Yemayá"], 8:["Obbatalá"], 9:["Oyá"], 10:["Obbatalá"], 11:["Elegguá","Babalú Ayé"], 12:["Shangó"],
+  13:["Babalú Ayé"], 14:["Olokun","Yemayá"], 15:["Oshún","Orunmila"], 16:["Obbatalá","Olofin"]
 };
 window.OBRAS = [
+// ---------------- AMOR (solo para uno mismo o para la pareja de común acuerdo) ----------------
+{id:"amor-pareja-suerte",titulo:"Baño al pie de Oshún para atraer pareja y buena suerte",orisha:"Oshún",tipo:"Baño",objetivos:["amor","suerte"],
+ materiales:["Leche de cabra","Té de manzanilla","Zumo de hojas de guanábana","Agua de la sopera de Oshún o de río","5 cucharadas de miel de abejas","Un chorrito de perfume Pompeya"],
+ pasos:"Se mezcla todo en un recipiente y se deja frente a Oshún unas tres horas. Se le pide a ella lo que se desea y luego la persona se baña con el preparado. Después se viste de blanco.",
+ entrega:"El resto del agua se puede llevar al río.",fuente:"236 obras con Oshún, n.º 99"},
+{id:"amor-banio-naranja",titulo:"Baño de naranja y rosas amarillas para el amor",orisha:"Oshún",tipo:"Baño",objetivos:["amor","dinero"],
+ materiales:["5 ruedas de naranja","Jugo natural de naranja","5 rosas amarillas","Canela","Miel de abejas"],
+ pasos:"En un cubo con agua se estrujan las rosas y se añaden el jugo y la miel. Las ruedas de naranja se rocían con miel y canela y con ellas se unta el cuerpo, pidiendo mejoría en el amor o en lo económico. La canela representa la pasión, la miel la dulzura y la naranja es fruta preferida de Oshún.",
+ fuente:"236 obras con Oshún, n.º 106"},
+{id:"amor-dulzura",titulo:"Cinco baños de miel para que lo miren con dulzura",orisha:"Oshún",tipo:"Baño",objetivos:["amor","trabajo"],
+ materiales:["Miel de abejas"],
+ pasos:"Durante 5 días la persona se unta miel de los pies a la cabeza antes de bañarse, pidiéndole a Oshún que así como su miel es dulce, la vean a ella con dulzura en el trabajo y en el trato con la gente.",
+ nota:"Se pide dulzura en general, sin nombrar a nadie.",fuente:"236 obras con Oshún, n.º 124"},
+{id:"amor-encontrar",titulo:"Enjuague para encontrar el amor",orisha:"Oshún",tipo:"Baño",objetivos:["amor"],
+ materiales:["3 rosas amarillas","5 granos de maíz","1 cucharada de miel","5 clavos de olor","5 rajitas de canela","Esencias de amor, atractivo y triunfo","Vela amarilla"],
+ pasos:"Las rosas, el maíz, los clavos y la canela se hierven media hora en agua. Se deja enfriar y se le añaden las esencias y la miel. Después del baño de costumbre la persona se enjuaga con este preparado durante 5 días, encendiéndole cada día una vela amarilla a Oshún y dándole las gracias por la protección del amor.",
+ fuente:"236 obras con Oshún, n.º 134"},
+{id:"amor-salud-champan",titulo:"Baño de miel y champán para la salud y el amor",orisha:"Oshún",tipo:"Baño",objetivos:["amor","salud"],
+ materiales:["Miel de abejas","Champán","Vela amarilla"],
+ pasos:"La persona se unta el cuerpo con miel ofreciéndosela a Oshún y pidiendo que así como la miel es dulce, sea dulce todo para ella, con amor y salud. Se enjuaga ligeramente y luego eleva la champán y se baña con ella todo el cuerpo. Se le enciende una vela amarilla a Oshún.",
+ fuente:"236 obras con Oshún, n.º 135"},
+{id:"amor-siete-rosas",titulo:"Cinco baños de rosas al amanecer",orisha:"Oshún",tipo:"Baño",objetivos:["amor"],
+ materiales:["7 rosas variadas (blancas, amarillas, rosadas y rojas) y claveles rojos","Esencias en aceite de amor, pachulí y atracción","Vela de miel","Jabón de amor (opcional)"],
+ pasos:"Las flores se maceran en agua suficiente y se les añaden las esencias. Se aplica después del baño normal, a las 6 de la mañana, durante 5 días seguidos. Cada día se enciende una vela de miel dedicada al amor, dando las gracias como si ya se hubiera recibido.",
+ fuente:"236 obras con Oshún, n.º 136"},
+{id:"amor-coco",titulo:"Baño de agua de coco para quien busca amores",orisha:"Oshún",tipo:"Baño",objetivos:["amor","limpieza"],
+ materiales:["Agua de coco verde","Agua de río o de la sopera de Oshún"],
+ pasos:"Durante 5 días seguidos, la persona que busca pareja agrega a su baño el agua de coco y el agua de río o de la sopera de Oshún.",
+ fuente:"236 obras con Oshún, n.º 147"},
+{id:"amor-incienso-verdadero",titulo:"Incienso del verdadero amor",orisha:"Oshún",tipo:"Sahumerio",objetivos:["amor"],
+ materiales:["1 parte de canela","1 parte de lirio","Unas gotas de aceite de pachulí"],
+ pasos:"Se mezclan los ingredientes y se queman como sahumerio pidiendo amor verdadero.",fuente:"236 obras con Oshún, n.º 137"},
+{id:"amor-incienso-pareja",titulo:"Incienso para fortalecer el amor por su pareja",orisha:"Oshún",tipo:"Sahumerio",objetivos:["amor","hogar"],
+ materiales:["2 partes de sangre de dragón","1 parte de lirio","½ parte de canela","½ parte de pétalos de rosa","Unas gotas de aceite de almizcle y de pachulí"],
+ pasos:"Se mezcla todo y se quema delante de Oshún, pidiendo por el amor que uno siente hacia su pareja.",fuente:"236 obras con Oshún, n.º 138"},
+{id:"amor-incienso-demas",titulo:"Incienso para el amor hacia los demás",orisha:"Oshún",tipo:"Sahumerio",objetivos:["amor","hogar"],
+ materiales:["2 partes de sándalo","½ parte de albahaca","½ parte de bergamota","Unas gotas de aceite de rosa y de lavanda"],
+ pasos:"Se mezcla y se quema delante de Oshún, pidiendo que crezca el cariño que uno siente por la familia, los amigos y la gente.",fuente:"236 obras con Oshún, n.º 139"},
+{id:"amor-irresistible",titulo:"Ebbó misí: loción para el encanto personal",orisha:"Oshún",tipo:"Loción y resguardo",objetivos:["amor"],
+ materiales:["1 velón blanco de más de 8 horas","Esencia de verbena","Cáscara pulverizada de un huevo blanco y de uno rubio","½ litro de agua de manantial","2 vasos de agua de mar, 1 de río y una copita de agua de lluvia","1 copa de ron negro","15 granos de café","5 cucharadas de miel de azahar","1 vaina de vainilla","5 clavos de olor","Un ramito de verbena","Recipiente de barro","Botella de cristal rojo o amarillo","Bolsita de seda rosa"],
+ pasos:"Se graba el propio nombre en el velón de la base a la mecha y se unta de verbena en la misma dirección. Se enciende frente al recipiente de barro, donde se ponen todos los ingredientes a macerar hasta que el velón se consuma. Se cuela: la parte sólida, ya seca, va en la bolsita de seda y se lleva encima; el líquido se guarda en la botella. Antes de salir a un encuentro, después de bañarse, se frota unas gotas en la boca del estómago y la cintura.",
+ entrega:"Se hace al pie de Oshún.",fuente:"236 obras con Oshún, n.º 87"},
+{id:"amor-merezca",titulo:"Altar para encontrar a quien merezca tu amor",orisha:"Oshún",tipo:"Petición",objetivos:["amor"],
+ materiales:["Un jarrón con agua","3 rosas rosadas","1 vela blanca","Un trozo de tela","Canela","Una hoja de laurel","Eucalipto","Cordel"],
+ pasos:"Mejor en luna creciente y a partir de la caída del sol. En una mesa que sirva de altar se pone el jarrón con agua y las tres rosas, y se enciende la vela blanca. En la tela se ponen la canela, el laurel y el eucalipto, se dobla como un hatillo y se ata con el cordel. En voz alta se pide encontrar a una persona con quien caminar juntos en la alegría y en el dolor.",
+ fuente:"236 obras con Oshún, n.º 92"},
+{id:"amor-shango-oshun",titulo:"Seis baños con Shangó y Oshún para atraer el amor",orisha:"Shangó",tipo:"Baño",objetivos:["amor"],
+ materiales:["1 botella de vino tinto","5 rajas de canela","Pétalos de 15 rosas rojas","250 g de miel de abejas","Loción Pompeya","3 litros de agua"],
+ pasos:"Se hierve todo menos la loción en los tres litros de agua; ya frío se le añade la loción y se divide en seis porciones que se guardan en el refrigerador. Cada baño: se echa una porción en un cubo de agua tibia, la persona se baña como siempre y al final se echa el preparado visualizando el amor que llega. Se pide permiso a Olofi, a Elegguá, a los santos y a los muertos, y se les pide a Shangó y Oshún que traigan el amor a su vida. Seis baños, dentro de un plazo de 21 días.",
+ nota:"Se pide amor para la propia vida, sin nombrar a nadie.",fuente:"236 obras con Oshún, n.º 107"},
+{id:"amor-pareja-crisis",titulo:"Calabaza de Oshún para una pareja en crisis",orisha:"Oshún",tipo:"Obra",objetivos:["amor","hogar"],
+ materiales:["1 vela dorada","2 velas amarillas y 15 más (una por día)","Cuchillo nuevo","1 calabaza redonda","1 piedra imán","1 cucharada de melaza","1 cucharada de cada azúcar: moreno, candi y blanco","5 cucharadas de miel","5 cucharadas de canela en polvo","15 cucharadas de zumo de sandía","1 palo de canela","Hilo de cobre","Pañuelo amarillo"],
+ pasos:"Se enciende la vela dorada. Se corta la tapa de la calabaza y se le saca la mitad de la pulpa; dentro van el imán, la melaza, los azúcares, la miel, la canela y el zumo de sandía, mezclados con el palo de canela. En una vela amarilla se graba el nombre propio y en la otra el de la pareja, pidiéndole a Oshún el fin de la crisis. Se unen las dos con el hilo de cobre, se meten en la calabaza y se tapa. Cuando la vela dorada se consume, sus restos van a la calabaza, que se pone debajo de la cama 15 días, encendiendo cada día una vela amarilla a Oshún. Al terminar, el imán se envuelve en el pañuelo y se ata a la pata de la cama.",
+ entrega:"La calabaza se deja flotando en un río limpio.",nota:"Para cuando los dos quieren arreglar la relación; no para retener a quien se quiere ir.",fuente:"236 obras con Oshún, n.º 84"},
 // ---------------- OSHÚN ----------------
 {id:"osh-cartera",titulo:"Cartera de Oshún",orisha:"Oshún",tipo:"Addimú",objetivos:["dinero","ofrenda"],
  materiales:["1 calabaza","5 yemas de huevo","Miel de abejas","Aceite de almendras","5 pedazos de orí (manteca de cacao)"],
